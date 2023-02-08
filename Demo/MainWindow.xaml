@@ -20,8 +20,6 @@
                 <ResourceDictionary Source="pack://application:,,,/TreeBreadcrumbControl;component/Themes/Converters.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/TreeBreadcrumbControl;component/Themes/CustomStyle.ListBox.xaml" />
             </ResourceDictionary.MergedDictionaries>
-
-            <demo:ExtractContentConverter x:Key="ExtractContentConverter" />
         </ResourceDictionary>
     </Window.Resources>
 
@@ -56,21 +54,8 @@
         <ListBox Grid.Row="4"
                  BorderThickness="1"
                  BorderBrush="#CCCCCC"
-                 Style="{StaticResource ListBoxStyle.Base}">
-            <ListBox.Resources>
-                <treeBreadcrumbControl:BindingProxy x:Key="BindingProxy.DirectoryInfos"
-                                                    Value="{Binding CurrentNode.Children, Converter={StaticResource ExtractContentConverter}}" />
-                <treeBreadcrumbControl:BindingProxy x:Key="BindingProxy.FileInfos"
-                                                    Value="{Binding FileInfos}" />
-            </ListBox.Resources>
-
-            <ListBox.ItemsSource>
-                <CompositeCollection>
-                    <CollectionContainer Collection="{Binding Path=Value, Source={StaticResource BindingProxy.DirectoryInfos}}" />
-                    <CollectionContainer Collection="{Binding Path=Value, Source={StaticResource BindingProxy.FileInfos}}" />
-                </CompositeCollection>
-            </ListBox.ItemsSource>
-
+                 ItemsSource="{Binding FileInfos}"
+                 Style="{StaticResource ListBoxStyle.Base}">       
             <ListBox.ItemTemplate>
                 <DataTemplate DataType="{x:Type io:FileSystemInfo}">
                     <Border Height="28"

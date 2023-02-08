@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using TreeBreadcrumbControl;
@@ -12,7 +14,7 @@ namespace Demo
     public class MainWindowViewModel : BindableBase
     {
         private ITreeNode<DirectoryInfo> _currentNode;
-        private IEnumerable<FileInfo> _fileInfos;
+        private ObservableCollection<FileSystemInfo> _fileSystemInfos = new();
         private string _exceptionMessage;
 
         public ITreeNode<DirectoryInfo> CurrentNode
@@ -21,10 +23,9 @@ namespace Demo
             set => SetProperty(ref _currentNode, value);
         }
 
-        public IEnumerable<FileInfo> FileInfos
+        public ObservableCollection<FileSystemInfo> FileInfos
         {
-            get => _fileInfos;
-            set => SetProperty(ref _fileInfos, value);
+            get => _fileSystemInfos;
         }
 
         public ICommand SetCurrentNodeCommand { get; }
@@ -80,8 +81,9 @@ namespace Demo
             await rootNode.RefreshAsync();
 
             CurrentNode = rootNode;
-
             await ((IRefreshable)CurrentNode).RefreshAsync();
+            await SetCurrentNodeAsync(rootNode);
+
         }
 
         private async Task SetCurrentNodeAsync(LazyObservableTreeNode<DirectoryInfo> node)
@@ -90,15 +92,26 @@ namespace Demo
             CurrentNode = node;
             await node.RefreshAsync();
 
+            _fileSystemInfos.Clear();
             try
             {
-                FileInfos = Directory.GetFiles(node.Content.FullName)
-                    .Select(item => new FileInfo(item));
+             
+                foreach(var child in CurrentNode.Children)
+                {
+                    _fileSystemInfos.Add(child.Content);
+                }
+                foreach (var fileInfo in Directory.GetFiles(node.Content.FullName)
+                    .Select(item => new FileInfo(item)))
+                {
+                    _fileSystemInfos.Add(fileInfo);
+                }
+
+
             }
             catch (Exception e)
             {
                 ExceptionMessage = e.Message;
-                FileInfos = null;
+                FileInfos.Clear();
             }
         }
     }

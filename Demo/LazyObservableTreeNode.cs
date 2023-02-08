@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using TreeBreadcrumbControl;
@@ -11,7 +12,7 @@ namespace Demo
         private bool _isRefreshing;
         private Func<T, Task<IEnumerable<T>>> _childrenProvider;
         private Func<T, string> _stringFormat;
-        private IEnumerable<ITreeNode<T>> _children;
+        private ObservableCollection<ITreeNode<T>> _children = new();
 
         public LazyObservableTreeNode(T content) => Content = content;
 
@@ -34,7 +35,6 @@ namespace Demo
         public virtual IEnumerable<ITreeNode<T>> Children
         {
             get => _children;
-            protected set => SetProperty(ref _children, value);
         }
 
         public virtual async Task<bool> RefreshAsync()
@@ -60,11 +60,18 @@ namespace Demo
 
         protected virtual LazyObservableTreeNode<T> GenerateLazyTreeNode(T content) => new LazyObservableTreeNode<T>(content);
 
-        protected virtual void SetChildrenCache(IReadOnlyList<ITreeNode<T>> childrenCache) => Children = childrenCache;
+        protected virtual void SetChildrenCache(IReadOnlyList<ITreeNode<T>> childrenCache)
+        {
+            _children.Clear();
+            foreach (var child in childrenCache)
+            {
+                _children.Add(child);
+            }
+        }
 
         private bool AbortRefresh()
         {
-            Children = null;
+            _children.Clear();
             _isRefreshing = false;
             return false;
         }
