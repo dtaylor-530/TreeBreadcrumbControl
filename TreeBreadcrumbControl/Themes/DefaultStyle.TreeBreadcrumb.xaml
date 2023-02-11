@@ -34,9 +34,9 @@
                             </Grid.ColumnDefinitions>
 
                             <!--Home Area-->
-                            <treeBreadcrumb:RootBreadcrumb Node="{Binding Path=Root, RelativeSource={RelativeSource TemplatedParent}}"
+                            <treeBreadcrumb:RootBreadcrumb Object="{Binding Path=Children, Converter={x:Static treeBreadcrumb:RootConverter.Instance}, RelativeSource={RelativeSource TemplatedParent}}"
                                                                    Overflow="{Binding Overflow, RelativeSource={RelativeSource Mode=TemplatedParent} }"
-                                                                   SetCurrentNodeCommand="{Binding Path=SetObject, RelativeSource={RelativeSource TemplatedParent}}"
+                                                                   SetObject="{Binding Path=SetObject, RelativeSource={RelativeSource TemplatedParent}}"
                                                                    IsTextMode="{Binding Path=IsTextMode, RelativeSource={RelativeSource TemplatedParent}}" />
                             <!--Items Area-->
                             <Grid Grid.Column="1">
@@ -58,20 +58,27 @@
                                                         Command="{Binding Path=SetTextModeCommand, RelativeSource={RelativeSource TemplatedParent}}"
                                                         Style="{StaticResource ButtonStyle.Transparent}" />
 
-                                                
+
                                                 <ItemsControl x:Name="TreeBreadcrumbItemsControl"
-                                                                                           ItemsSource="{Binding Path=Descendants, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                                                                           ItemsSource="{Binding Path=Children, Converter={x:Static treeBreadcrumb:CollectionConverter.Instance}, ConverterParameter=1, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"
                                                                                            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                                                                            ScrollViewer.VerticalScrollBarVisibility="Disabled"
                                                                                            HorizontalAlignment="Left"
                                                                                            VerticalAlignment="Center">
                                                     <ItemsControl.ItemTemplate>
                                                         <DataTemplate>
-                                                            <treeBreadcrumb:Breadcrumb Object="{Binding}"
+                                                            <treeBreadcrumb:Breadcrumb Object="{Binding }"
+                                                                                       Flow="{Binding Flow}"
                                                                                                SetObject="{Binding Path=SetObject, 
                                                                                                                    RelativeSource={RelativeSource AncestorType=treeBreadcrumb:BreadCrumbsBox}}" />
                                                         </DataTemplate>
                                                     </ItemsControl.ItemTemplate>
+                                                    <ItemsControl.ItemContainerStyle>
+                                                        <Style>
+                                                            <Setter Property="treeBreadcrumb:CollapseOverflowItemsPanel.Flow" Value="{Binding Flow}" />
+                                                     
+                                                        </Style>
+                                                    </ItemsControl.ItemContainerStyle>
                                                     <ItemsControl.ItemsPanel>
                                                         <ItemsPanelTemplate>
                                                             <treeBreadcrumb:CollapseOverflowItemsPanel x:Name="PART_CollapseOverflowItemsPanel"

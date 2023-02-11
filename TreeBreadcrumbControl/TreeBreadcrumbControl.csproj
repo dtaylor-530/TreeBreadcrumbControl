@@ -18,6 +18,10 @@
     <PackageReference Include="WpfExtensions.Xaml" Version="1.1.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Enums\Enums.csproj" />
+    <ProjectReference Include="..\WPF.Commands\WPF.Commands.csproj" />
+  </ItemGroup>
+  <ItemGroup>
     <Resource Include="Fonts\iconfont.ttf" />
   </ItemGroup>
 </Project>

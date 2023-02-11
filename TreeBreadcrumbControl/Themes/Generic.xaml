@@ -2,8 +2,8 @@
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/TreeBreadcrumbControl;component/Themes/DefaultStyle.TreeBreadcrumbItem.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/TreeBreadcrumbControl;component/Themes/DefaultStyle.TreeBreadcrumbItemsControl.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/TreeBreadcrumbControl;component/Themes/DefaultStyle.Crumbs.xaml" />
+        <!--<ResourceDictionary Source="pack://application:,,,/TreeBreadcrumbControl;component/Themes/DefaultStyle.TreeBreadcrumbItemsControl.xaml" />-->
+        <ResourceDictionary Source="pack://application:,,,/TreeBreadcrumbControl;component/Themes/DefaultStyle.TreeBreadcrumb.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
 </ResourceDictionary>

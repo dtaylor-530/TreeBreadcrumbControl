@@ -12,6 +12,7 @@ namespace Demo
         {
             DataContext = new MainViewModel();
             InitializeComponent();
+            this.Content = DataContext;
         }
 
         private void UIElement_OnMouseDown(object sender, MouseButtonEventArgs e)

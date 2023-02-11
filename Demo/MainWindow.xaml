@@ -10,6 +10,7 @@
         mc:Ignorable="d"
         Title="MainWindow"
         Height="450"
+        xmlns:models="clr-namespace:Models;assembly=Models"
         Width="800"
         MinWidth="300"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
@@ -31,6 +32,10 @@
                    Background="Red"
                    HorizontalAlignment="Center"
                    TextWrapping="Wrap"
+                     Visibility="{Binding 
+                                        Converter={markup:Compose {StaticResource IsNullOrEmptyOperator}, 
+                                                                  {StaticResource NotOperator}, 
+                                                                  {StaticResource BooleanToVisibilityConverter}}}" 
               />
             </DataTemplate>
 
@@ -71,48 +76,56 @@
                     </Grid>
                 </Border>
             </DataTemplate>
-            <DataTemplate DataType="{x:Type ObjectProperty}">
-                <treeBreadcrumbControl:Crumbs Object="{Binding Object}"
-                                              SetCurrentNodeCommand="{Binding Path=SetCurrentNodeCommand}"
-                                              PathSeparator="\" />
-            </DataTemplate>
-            <DataTemplate DataType="{x:Type demo:MainViewModel}">
 
-                <Grid Margin="20"
-          Focusable="True"
-          MouseDown="UIElement_OnMouseDown"
-          Background="#FFFFFF">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="16" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="16" />
-                        <RowDefinition />
-                        <RowDefinition Height="36" />
 
-                    </Grid.RowDefinitions>
-          
-
-                    <ContentControl 
-            Grid.Row="2"
-            Content="{Binding Exception}" 
-                             Visibility="{Binding , 
-                                        Converter={markup:Compose {StaticResource IsNullOrEmptyOperator}, 
-                                                                  {StaticResource NotOperator}, 
-                                                                  {StaticResource BooleanToVisibilityConverter}}}" 
-                        ></ContentControl>
-
-                    <ListBox Grid.Row="4"
+            <DataTemplate DataType="{x:Type models:Collection}">
+                <ListBox 
                  BorderThickness="1"
                  BorderBrush="#CCCCCC"
-                 ItemsSource="{Binding FileInfos}"
+                 ItemsSource="{Binding }"
                  Style="{StaticResource ListBoxStyle.Base}">
+                </ListBox>
+            </DataTemplate>
+            
+            <DataTemplate DataType="{x:Type demo:ObjectProperty}">
+                <treeBreadcrumbControl:BreadCrumbsBox Children="{Binding Value.Ancestors, Converter={x:Static demo:ReverseConverter.Instance}}"                                         
+                                              SetObject="{Binding Path=SetCommand}"
+                                              PathSeparator="\" />
+            </DataTemplate>
 
-                    </ListBox>
-                </Grid>
+            <DataTemplate DataType="{x:Type demo:Property}">
+                <ContentControl Content="{Binding Value}" />
+            </DataTemplate>
+
+            <!--ItemTemplateSelector="{x:Static demo:TemplateSelector.Instance}"-->
+
+            <DataTemplate DataType="{x:Type demo:MainViewModel}">
+                <ItemsControl ItemsSource="{Binding Properties}">
+                    <ItemsControl.ItemContainerStyle>
+                        <Style>
+                            <Setter Property="Grid.Row" Value="{Binding GridRow}" />
+                            <Setter Property="Grid.Column" Value="{Binding GridColumn}" />
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Grid Margin="20"
+                                  Focusable="True"
+                                  MouseDown="UIElement_OnMouseDown"
+                                  Background="#FFFFFF">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="16" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="16" />
+                                    <RowDefinition />
+                                    <RowDefinition Height="36" />
+                                </Grid.RowDefinitions>
+                            </Grid>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
             </DataTemplate>
         </ResourceDictionary>
     </Window.Resources>
-
-
 </Window>

@@ -33,13 +33,13 @@
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <Button Grid.Column="0"
-                                    Content="{Binding Path=Node, RelativeSource={RelativeSource TemplatedParent}}"
+                                    Content="{Binding Path=Object, RelativeSource={RelativeSource TemplatedParent}}"
                                     Command="{Binding Path=InternalSetCurrentNodeCommand, RelativeSource={RelativeSource TemplatedParent}}"
-                                    CommandParameter="{TemplateBinding Node}"
+                                    CommandParameter="{TemplateBinding Object}"
                                     Style="{StaticResource ButtonStyle.BreadcrumbItem}" />
                             <ToggleButton x:Name="ExpandButton"
                                           Grid.Column="1"
-                                          Visibility="{Binding Path=Node.Children, 
+                                          Visibility="{Binding Path=Object.Children, 
                                                                Converter={markup:Compose {StaticResource AnyOperator}, {StaticResource BooleanToVisibilityConverter}}, 
                                                                RelativeSource={RelativeSource TemplatedParent}}"
                                           Style="{StaticResource ButtonStyle.Iconfont}"
@@ -55,14 +55,14 @@
 
                                 <Popup.Resources>
                                     <treeBreadcrumbControl:BindingProxy x:Key="BindingProxy.Children"
-                                                                        Value="{Binding Path=Node.Children, RelativeSource={RelativeSource TemplatedParent}}" />
+                                                                        Value="{Binding Path=Object.Children, RelativeSource={RelativeSource TemplatedParent}}" />
                                     <treeBreadcrumbControl:BindingProxy x:Key="BindingProxy.SetCurrentNodeCommand"
                                                                         Value="{Binding Path=InternalSetCurrentNodeCommand, RelativeSource={RelativeSource TemplatedParent}}" />
                                 </Popup.Resources>
 
                                 <Border Style="{StaticResource BorderStyle.PopupContent}">
                                     <Grid>
-                                        <ListBox ItemsSource="{Binding Path=Value, Source={StaticResource BindingProxy.Children}}"
+                                        <ListBox ItemsSource="{Binding Source={StaticResource BindingProxy.Children}}"
                                                  treeBreadcrumbControl:ControlHelper.RelayCommand="{Binding Path=Value, Source={StaticResource BindingProxy.SetCurrentNodeCommand}}"
                                                  ItemTemplate="{StaticResource BreadcrumbItemTemplate.PopupItem}"
                                                  Style="{StaticResource ListBoxStyle.Base}" />
@@ -90,7 +90,7 @@
                             </Grid.ColumnDefinitions>
                             <Button Grid.Column="0"
                                     Command="{Binding Path=InternalSetCurrentNodeCommand, RelativeSource={RelativeSource TemplatedParent}}"
-                                    CommandParameter="{TemplateBinding Node}"
+                                    CommandParameter="{TemplateBinding Object}"
                                     FontSize="14"
                                     Tag="{StaticResource Iconfont.Home}"
                                     Style="{StaticResource ButtonStyle.Iconfont}" />
@@ -109,7 +109,7 @@
                                                 <Setter Property="Tag"
                                                         Value="{StaticResource Iconfont.DoubleLeftArrow}" />
                                             </DataTrigger>
-                                            <DataTrigger Binding="{Binding Path=Node.Children, Converter={StaticResource AnyOperator}, RelativeSource={RelativeSource TemplatedParent}}"
+                                            <DataTrigger Binding="{Binding Path=Object.Children, Converter={StaticResource AnyOperator}, RelativeSource={RelativeSource TemplatedParent}}"
                                                          Value="False">
                                                 <Setter Property="Visibility"
                                                         Value="Collapsed" />
@@ -132,7 +132,7 @@
 
                                 <Popup.Resources>
                                     <treeBreadcrumbControl:BindingProxy x:Key="BindingProxy.Children"
-                                                                        Value="{Binding Path=Node.Children, RelativeSource={RelativeSource TemplatedParent}}" />
+                                                                        Value="{Binding Path=Object.Children, RelativeSource={RelativeSource TemplatedParent}}" />
                                     <treeBreadcrumbControl:BindingProxy x:Key="BindingProxy.OverflowItems"
                                                                         Value="{Binding Path=OverflowItems, RelativeSource={RelativeSource TemplatedParent}}" />
                                     <treeBreadcrumbControl:BindingProxy x:Key="BindingProxy.SetCurrentNodeCommand"

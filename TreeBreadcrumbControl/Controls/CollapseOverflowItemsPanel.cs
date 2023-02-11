@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Enums;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,26 +9,23 @@ using System.Windows.Controls.Primitives;
 
 namespace TreeBreadcrumbControl
 {
-    public enum Flow
-    {
-        Under, Direct, Over
-    }
+
 
     public class CollapseOverflowItemsPanel : VirtualizingPanel
     {
         public static readonly DependencyProperty OverflowItemsProperty = DependencyProperty.Register(
             "OverflowItems", typeof(IEnumerable), typeof(CollapseOverflowItemsPanel), new PropertyMetadata(null));
+
         public static readonly DependencyProperty OrientationProperty = DependencyProperty.Register(
             "Orientation", typeof(Orientation), typeof(CollapseOverflowItemsPanel), new FrameworkPropertyMetadata(
                 Orientation.Horizontal, FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange));
+
         public static readonly DependencyProperty ReserveProperty = DependencyProperty.Register(
             "Reserve", typeof(bool), typeof(CollapseOverflowItemsPanel), new FrameworkPropertyMetadata(
                 false, FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange));
 
-
-        public static readonly DependencyProperty
-  FlowProperty = DependencyProperty.RegisterAttached(
-       "Flow", typeof(Flow), typeof(CollapseOverflowItemsPanel), new PropertyMetadata(false));
+        public static readonly DependencyProperty FlowProperty = DependencyProperty.RegisterAttached(
+            "Flow", typeof(Flow), typeof(CollapseOverflowItemsPanel), new PropertyMetadata(Flow.Direct));
 
         public static string GetFlow(DependencyObject d)
         {

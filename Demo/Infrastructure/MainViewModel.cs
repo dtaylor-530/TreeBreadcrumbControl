@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Demo.Infrastructure;
+using Models;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -6,58 +9,48 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using System.Xml.Linq;
 using TreeBreadcrumbControl;
 using TreeBreadcrumbControl.Commands;
 
 namespace Demo
 {
-    public class ObjectProperty : Property<ITreeNode<DirectoryInfo>>
+    public class ObjectProperty : Property<INode>
     {
-        public ObjectProperty(ICommand setCommand) : base(setCommand)
+        public ObjectProperty(ICommand setCommand)
         {
+            SetCommand = setCommand;
         }
+
+        public ICommand? SetCommand { get; protected set; }
     }
 
 
-
-
-    public class MainViewModel : BindableBase
+    public class MainViewModel : IObserver
     {
-        //private ITreeNode<DirectoryInfo> _currentNode;
-        private ObservableCollection<FileSystemInfo> _fileSystemInfos = new();
-        private Exception _exception;
+        List<Property> properties = new();
 
+        IDisposable disposable = null;
 
-        public ObjectProperty Object { get; }
-        //public ITreeNode<DirectoryInfo> Object
-        //{
-        //    get => _currentNode;
-        //    private set => SetProperty(ref _currentNode, value);
-        //}
+        readonly ObjectProperty objectProperty;
+        readonly Property<Exception> exceptionProperty;
+        readonly Property<Collection> fileSystemInfosProperty;      
 
-        public ObservableCollection<FileSystemInfo> FileInfos
-        {
-            get => _fileSystemInfos;
-        }
-
-        //public ICommand SetCurrentNodeCommand { get; }
-
-        public ICommand OpenDirectoryCommand { get; }
-
-        public Exception Exception
-        {
-            get => _exception;
-            set => SetProperty(ref _exception, value);
-        }
 
         public MainViewModel()
         {
-            Object = new(new RelayCommand<LazyObservableTreeNode<DirectoryInfo>>(async node => await SetCurrentNodeAsync(node)));
+            objectProperty = new(new RelayCommand<Node>(node => SetCurrentNodeAsync(node))) { GridRow = 0 };
+            exceptionProperty = new() { GridRow = 2 };
+            fileSystemInfosProperty = new(new()) { GridRow = 4 };
+
+            properties.Add(objectProperty);
+            properties.Add(exceptionProperty);
+            properties.Add(fileSystemInfosProperty);
 
             OpenDirectoryCommand = new RelayCommand<DirectoryInfo>(async info =>
             {
-                var node = (LazyObservableTreeNode<DirectoryInfo>)Object.Value.Children.First(item => item.Content == info);
-                await SetCurrentNodeAsync(node);
+                var node = (Node)objectProperty.GetValue().Children.OfType<INode>().First(item => item.Content == info);
+                SetCurrentNodeAsync(node);
             });
 
 #pragma warning disable 4014
@@ -65,62 +58,59 @@ namespace Demo
 #pragma warning restore 4014
         }
 
-        private async Task InitializeCurrentNodeAsync()
+        public IEnumerable Properties => properties;
+
+        public ICommand OpenDirectoryCommand { get; }
+
+
+        private void InitializeCurrentNodeAsync()
         {
-            var rootNode = new LazyObservableTreeNode<DirectoryInfo>(new DirectoryInfo(@"C:\"))
-            {
-                ChildrenProvider = content => Task.Run(() =>
-                {
-                    try
-                    {
-                        if (content is DirectoryInfo directoryInfo)
-                        {
-                            return Directory.GetDirectories(directoryInfo.FullName)
-                                .Select(item => new DirectoryInfo(item));
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Exception = e;
-                    }
-
-                    return null;
-                }),
-                StringFormat = content => content.Name.Replace("\\", "").Replace("/", "")
-            };
-
-
-            await SetCurrentNodeAsync(rootNode);
+            SetCurrentNodeAsync(new DirectoryNode(@"C:\"));
         }
 
-        private async Task SetCurrentNodeAsync(LazyObservableTreeNode<DirectoryInfo> node)
+        private void SetCurrentNodeAsync(Node node)
         {
-            Exception = null;
-
-            await node.RefreshAsync();
-            Object.Value = node;
-
-            _fileSystemInfos.Clear();
             try
             {
-
-                foreach (var child in node.Children)
-                {
-                    _fileSystemInfos.Add(child.Content);
-                }
-                foreach (var fileInfo in Directory.GetFiles(node.Content.FullName)
-                    .Select(item => new FileInfo(item)))
-                {
-                    _fileSystemInfos.Add(fileInfo);
-                }
-
-
+                Reset();
+                disposable = node.Children.Subscribe(this);
             }
             catch (Exception e)
             {
-                Exception = e;
-                FileInfos.Clear();
+                exceptionProperty.SetValue(e);
+                //fileSystemInfosProperty.GetValue().Clear();
             }
+
+            void Reset()
+            {
+                fileSystemInfosProperty.GetValue().Clear();
+                exceptionProperty.SetValue(null);
+                objectProperty.SetValue(node);
+                disposable?.Dispose();
+            }
+        }
+
+        public void OnNext(object change)
+        {
+            if (change is Change { Type: ChangeType.Insert, Value: Node value })
+            {
+                fileSystemInfosProperty.GetValue().Add(value.Content);
+            }
+        }
+
+
+        public void OnCompleted()
+        {
+            foreach (var fileInfo in Directory.GetFiles((objectProperty.GetValue().Content as FileSystemInfo).FullName)
+                    .Select(item => new FileInfo(item)))
+            {
+                fileSystemInfosProperty.GetValue().Add(fileInfo);
+            }
+        }
+
+        public void OnError(Exception error)
+        {
+            throw new NotImplementedException();
         }
     }
 }

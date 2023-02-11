@@ -31,16 +31,16 @@ namespace TreeBreadcrumbControl
         //            }
         //        }));
         public static readonly DependencyProperty SetObjectProperty = DependencyProperty.Register(
-            "SetCurrentNodeCommand", typeof(ICommand), typeof(BreadCrumbsBox), new PropertyMetadata(default(ICommand)));
+            "SetObject", typeof(ICommand), typeof(BreadCrumbsBox), new PropertyMetadata(default(ICommand)));
 
         public static readonly DependencyProperty PathSeparatorProperty = DependencyProperty.Register(
             "PathSeparator", typeof(string), typeof(BreadCrumbsBox), new PropertyMetadata("/"));
 
-        public static readonly DependencyProperty RootProperty =
-            DependencyProperty.Register("Root", typeof(object), typeof(BreadCrumbsBox), new PropertyMetadata());
+        //public static readonly DependencyProperty RootProperty =
+        //    DependencyProperty.Register("Root", typeof(object), typeof(BreadCrumbsBox), new PropertyMetadata());
 
-        public static readonly DependencyProperty DescendantsProperty =
-            DependencyProperty.Register("Descendants", typeof(IEnumerable), typeof(BreadCrumbsBox), new PropertyMetadata());
+        public static readonly DependencyProperty ChildrenProperty =
+            DependencyProperty.Register("Children", typeof(IEnumerable), typeof(BreadCrumbsBox), new PropertyMetadata());
         
         public static readonly DependencyProperty OverflowProperty =
             DependencyProperty.Register("Overflow", typeof(IEnumerable), typeof(BreadCrumbsBox), new PropertyMetadata());
@@ -86,11 +86,11 @@ namespace TreeBreadcrumbControl
 
 
 
-        public object Root
-        {
-            get { return (object)GetValue(RootProperty); }
-            set { SetValue(RootProperty, value); }
-        }
+        //public object Root
+        //{
+        //    get { return (object)GetValue(RootProperty); }
+        //    set { SetValue(RootProperty, value); }
+        //}
 
         //public IEnumerable Ancestors
         //{
@@ -103,10 +103,10 @@ namespace TreeBreadcrumbControl
         //    DependencyProperty.Register("Ancestors", typeof(IEnumerable), typeof(BreadCrumbs), new PropertyMetadata());
 
 
-        public IEnumerable Descendants
+        public IEnumerable Children
         {
-            get { return (IEnumerable)GetValue(DescendantsProperty); }
-            set { SetValue(DescendantsProperty, value); }
+            get { return (IEnumerable)GetValue(ChildrenProperty); }
+            set { SetValue(ChildrenProperty, value); }
         }
 
         public IEnumerable Overflow
