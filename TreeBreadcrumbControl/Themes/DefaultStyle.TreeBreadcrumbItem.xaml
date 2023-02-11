@@ -1,7 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:markup="clr-namespace:WpfExtensions.Xaml.Markup;assembly=WpfExtensions.Xaml"
-                    xmlns:treeBreadcrumbControl="clr-namespace:TreeBreadcrumbControl">
+                    xmlns:local="clr-namespace:TreeBreadcrumbControl">
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/TreeBreadcrumbControl;component/Fonts/Iconfont.xaml" />
@@ -20,10 +20,10 @@
         </Border>
     </DataTemplate>
 
-    <Style TargetType="{x:Type treeBreadcrumbControl:Breadcrumb}">
+    <Style TargetType="{x:Type local:Breadcrumb}">
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type treeBreadcrumbControl:Breadcrumb}">
+                <ControlTemplate TargetType="{x:Type local:Breadcrumb}">
                     <Border Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}">
@@ -53,17 +53,16 @@
                                    PlacementTarget="{Binding ElementName=ExpandButton}"
                                    Style="{StaticResource PopupStyle.Expand}">
 
-                                <Popup.Resources>
-                                    <treeBreadcrumbControl:BindingProxy x:Key="BindingProxy.Children"
-                                                                        Value="{Binding Path=Object.Children, RelativeSource={RelativeSource TemplatedParent}}" />
-                                    <treeBreadcrumbControl:BindingProxy x:Key="BindingProxy.SetCurrentNodeCommand"
+                                <Popup.Resources>                                
+                                    <local:BindingProxy x:Key="BindingProxy.SetCurrentNodeCommand"
                                                                         Value="{Binding Path=InternalSetCurrentNodeCommand, RelativeSource={RelativeSource TemplatedParent}}" />
                                 </Popup.Resources>
 
                                 <Border Style="{StaticResource BorderStyle.PopupContent}">
                                     <Grid>
-                                        <ListBox ItemsSource="{Binding Source={StaticResource BindingProxy.Children}}"
-                                                 treeBreadcrumbControl:ControlHelper.RelayCommand="{Binding Path=Value, Source={StaticResource BindingProxy.SetCurrentNodeCommand}}"
+                                        <ListBox 
+                                                 ItemsSource="{Binding Object.Children, RelativeSource={RelativeSource TemplatedParent}}"
+                                                 local:ControlHelper.RelayCommand="{Binding Path=Value, Source={StaticResource BindingProxy.SetCurrentNodeCommand}}"
                                                  ItemTemplate="{StaticResource BreadcrumbItemTemplate.PopupItem}"
                                                  Style="{StaticResource ListBoxStyle.Base}" />
                                     </Grid>
@@ -76,10 +75,10 @@
         </Setter>
     </Style>
 
-    <Style TargetType="{x:Type treeBreadcrumbControl:RootBreadcrumb}">
+    <Style TargetType="{x:Type local:RootBreadcrumb}">
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type treeBreadcrumbControl:RootBreadcrumb}">
+                <ControlTemplate TargetType="{x:Type local:RootBreadcrumb}">
                     <Border Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}">
@@ -131,11 +130,11 @@
                                    Style="{StaticResource PopupStyle.Expand}">
 
                                 <Popup.Resources>
-                                    <treeBreadcrumbControl:BindingProxy x:Key="BindingProxy.Children"
+                                    <local:BindingProxy x:Key="BindingProxy.Children"
                                                                         Value="{Binding Path=Object.Children, RelativeSource={RelativeSource TemplatedParent}}" />
-                                    <treeBreadcrumbControl:BindingProxy x:Key="BindingProxy.OverflowItems"
+                                    <local:BindingProxy x:Key="BindingProxy.OverflowItems"
                                                                         Value="{Binding Path=OverflowItems, RelativeSource={RelativeSource TemplatedParent}}" />
-                                    <treeBreadcrumbControl:BindingProxy x:Key="BindingProxy.SetCurrentNodeCommand"
+                                    <local:BindingProxy x:Key="BindingProxy.SetCurrentNodeCommand"
                                                                         Value="{Binding Path=InternalSetCurrentNodeCommand, RelativeSource={RelativeSource TemplatedParent}}" />
                                 </Popup.Resources>
 
@@ -144,7 +143,7 @@
                                         <ListBox ItemsSource="{markup:If {Binding Path=Value, Converter={StaticResource AnyOperator}, Source={StaticResource BindingProxy.OverflowItems}},
                                                                          {Binding Path=Value, Converter={StaticResource ReverseOperator}, Source={StaticResource BindingProxy.OverflowItems}},
                                                                          {Binding Path=Value, Source={StaticResource BindingProxy.Children}}}"
-                                                 treeBreadcrumbControl:ControlHelper.RelayCommand="{Binding Path=Value, Source={StaticResource BindingProxy.SetCurrentNodeCommand}}"
+                                                 local:ControlHelper.RelayCommand="{Binding Path=Value, Source={StaticResource BindingProxy.SetCurrentNodeCommand}}"
                                                  ItemTemplate="{StaticResource BreadcrumbItemTemplate.PopupItem}"
                                                  Style="{StaticResource ListBoxStyle.Base}" />
                                     </Grid>
