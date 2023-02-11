@@ -45,7 +45,7 @@
                             Background="#01FFFFFF">
                     <Border.InputBindings>
                         <MouseBinding MouseAction="LeftClick"
-                                          Command="{Binding Path=DataContext.OpenDirectoryCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                          Command="{Binding Path=DataContext.SetCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                           CommandParameter="{Binding}" />
                     </Border.InputBindings>
                     <Grid>

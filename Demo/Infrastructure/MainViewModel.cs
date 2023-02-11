@@ -53,6 +53,11 @@ namespace Demo
                 SetCurrentNodeAsync(node);
             });
 
+            SetCommand = new RelayCommand<object>(a =>
+            {
+
+            });
+
 #pragma warning disable 4014
             InitializeCurrentNodeAsync();
 #pragma warning restore 4014
@@ -61,6 +66,7 @@ namespace Demo
         public IEnumerable Properties => properties;
 
         public ICommand OpenDirectoryCommand { get; }
+        public ICommand SetCommand { get; }
 
 
         private void InitializeCurrentNodeAsync()

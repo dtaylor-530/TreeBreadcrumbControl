@@ -18,18 +18,7 @@ namespace TreeBreadcrumbControl
     {
         public const string TextBoxName = "PART_TextBox";
 
-        //public static readonly DependencyProperty ObjectProperty = DependencyProperty.Register(
-        //    "Object", typeof(object), typeof(BreadCrumbs), new PropertyMetadata(null,
-        //        (o, args) =>
-        //        {
-        //            if (o is BreadCrumbs @this && args.NewValue is object node)
-        //            { 
-        //                var ancestors = @this.Converter.Convert(node, default, default, default) as IEnumerable<object>;
-        //                @this.Root = ancestors.First();
-        //                @this.Root = ancestors.Skip(1);
-        //                //(@this.Root, @this.Crumbs) = GetAncestors(node);
-        //            }
-        //        }));
+
         public static readonly DependencyProperty SetObjectProperty = DependencyProperty.Register(
             "SetObject", typeof(ICommand), typeof(BreadCrumbsBox), new PropertyMetadata(default(ICommand)));
 
@@ -44,10 +33,6 @@ namespace TreeBreadcrumbControl
         
         public static readonly DependencyProperty OverflowProperty =
             DependencyProperty.Register("Overflow", typeof(IEnumerable), typeof(BreadCrumbsBox), new PropertyMetadata());
-
-
-
-
 
 
         static BreadCrumbsBox()
@@ -68,39 +53,21 @@ namespace TreeBreadcrumbControl
             {
                 IsTextMode = true;
 
-                //_textBox.ExecuteAfterLoaded(@this =>
-                //{
-                //    @this.Text = string.Join(PathSeparator, Ancestors.Cast<object>().Select(item => item.ToString()));
-                //    if (!@this.Focus())
-                //    {
-                //        throw new InvalidOperationException(
-                //            "The focus of the TextBox setting operation should not fail, please check the custom template.");
-                //    }
-                //    @this.LostKeyboardFocus += TextBoxOnLostKeyboardFocus;
-                //});
+                _textBox.ExecuteAfterLoaded(@this =>
+                {
+                    @this.Text = string.Join(PathSeparator, Children.Cast<object>().Select(item => item.ToString()));
+                    if (!@this.Focus())
+                    {
+                        throw new InvalidOperationException(
+                            "The focus of the TextBox setting operation should not fail, please check the custom template.");
+                    }
+                    @this.LostKeyboardFocus += TextBoxOnLostKeyboardFocus;
+                });
             });
         }
 
 
         #region properties
-
-
-
-        //public object Root
-        //{
-        //    get { return (object)GetValue(RootProperty); }
-        //    set { SetValue(RootProperty, value); }
-        //}
-
-        //public IEnumerable Ancestors
-        //{
-        //    get { return (IEnumerable)GetValue(AncestorsProperty); }
-        //    set { SetValue(AncestorsProperty, value); }
-        //}
-
-        //// Using a DependencyProperty as the backing store for Ancestors.  This enables animation, styling, binding, etc...
-        //public static readonly DependencyProperty AncestorsProperty =
-        //    DependencyProperty.Register("Ancestors", typeof(IEnumerable), typeof(BreadCrumbs), new PropertyMetadata());
 
 
         public IEnumerable Children
@@ -115,19 +82,6 @@ namespace TreeBreadcrumbControl
             set { SetValue(OverflowProperty, value); }
         }
 
-
-        //public IValueConverter Converter
-        //{
-        //    get { return (IValueConverter)GetValue(ConverterProperty); }
-        //    set { SetValue(ConverterProperty, value); }
-        //}
-
-        //public object Object
-        //{
-        //    get => GetValue(ObjectProperty);
-        //    set => SetValue(ObjectProperty, value);
-        //}
-
         public ICommand SetObject
         {
             get => (ICommand)GetValue(SetObjectProperty);
@@ -139,18 +93,6 @@ namespace TreeBreadcrumbControl
             get => (string)GetValue(PathSeparatorProperty);
             set => SetValue(PathSeparatorProperty, value);
         }
-
-        //public IEnumerable Collection
-        //{
-        //    get => collection;
-        //    private set => SetProperty(ref collection, value);
-        //}
-
-        //public object Root
-        //{
-        //    get => _root;
-        //    private set => SetProperty(ref _root, value);
-        //}
 
         public bool IsTextMode
         {
@@ -175,17 +117,6 @@ namespace TreeBreadcrumbControl
             _textBox.LostKeyboardFocus -= TextBoxOnLostKeyboardFocus;
             IsTextMode = false;
         }
-
-        //private static  IEnumerable<object> Crumbs GetAncestors(object node)
-        //{
-
-        //    var parent = node;
-        //    while (parent != null)
-        //    {
-        //        yield return parent;
-        //        parent = parent.Parent;
-        //    }
-        //}
 
         #region INotifyPropertyChanged
 
