@@ -7,12 +7,12 @@ using TreeBreadcrumbControl;
 
 namespace Demo
 {
-    public class LazyObservableTreeNode<T> : ITreeNode<T>, IRefreshable
+    public class LazyObservableTreeNode<T> : INode<T>, IRefreshable
     {
         private bool _isRefreshing;
         private Func<T, Task<IEnumerable<T>>> _childrenProvider;
         private Func<T, string> _stringFormat;
-        private ObservableCollection<ITreeNode<T>> _children = new();
+        private ObservableCollection<INode<T>> _children = new();
 
         public LazyObservableTreeNode(T content) => Content = content;
 
@@ -30,9 +30,9 @@ namespace Demo
 
         public T Content { get; }
 
-        public virtual ITreeNode<T> Parent { get; protected set; }
+        public virtual INode<T> Parent { get; protected set; }
 
-        public virtual IEnumerable<ITreeNode<T>> Children
+        public virtual IEnumerable<INode<T>> Children
         {
             get => _children;
         }
@@ -60,7 +60,7 @@ namespace Demo
 
         protected virtual LazyObservableTreeNode<T> GenerateLazyTreeNode(T content) => new LazyObservableTreeNode<T>(content);
 
-        protected virtual void SetChildrenCache(IReadOnlyList<ITreeNode<T>> childrenCache)
+        protected virtual void SetChildrenCache(IReadOnlyList<INode<T>> childrenCache)
         {
             _children.Clear();
             foreach (var child in childrenCache)

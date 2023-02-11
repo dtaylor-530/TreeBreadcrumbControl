@@ -10,7 +10,7 @@ namespace Demo
     {
         public MainWindow()
         {
-            DataContext = new MainWindowViewModel();
+            DataContext = new MainViewModel();
             InitializeComponent();
         }
 

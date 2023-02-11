@@ -8,6 +8,11 @@ using System.Windows.Controls.Primitives;
 
 namespace TreeBreadcrumbControl
 {
+    public enum Flow
+    {
+        Under, Direct, Over
+    }
+
     public class CollapseOverflowItemsPanel : VirtualizingPanel
     {
         public static readonly DependencyProperty OverflowItemsProperty = DependencyProperty.Register(
@@ -18,6 +23,21 @@ namespace TreeBreadcrumbControl
         public static readonly DependencyProperty ReserveProperty = DependencyProperty.Register(
             "Reserve", typeof(bool), typeof(CollapseOverflowItemsPanel), new FrameworkPropertyMetadata(
                 false, FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange));
+
+
+        public static readonly DependencyProperty
+  FlowProperty = DependencyProperty.RegisterAttached(
+       "Flow", typeof(Flow), typeof(CollapseOverflowItemsPanel), new PropertyMetadata(false));
+
+        public static string GetFlow(DependencyObject d)
+        {
+            return (string)d.GetValue(FlowProperty);
+        }
+        public static void SetFlow(DependencyObject d, Flow value)
+        {
+            d.SetValue(FlowProperty, value);
+        }
+
 
         public IEnumerable OverflowItems
         {
@@ -61,6 +81,15 @@ namespace TreeBreadcrumbControl
             if (!EqualsList((IList)OverflowItems, overflowItems))
             {
                 OverflowItems = overflowItems;
+            }
+
+            foreach(var item in OverflowItems)
+            {
+                if (item is DependencyObject dependencyObject)
+                    SetFlow(dependencyObject, Flow.Over);
+                else
+                    throw new Exception("fr ");
+
             }
 
             return measuredSize;

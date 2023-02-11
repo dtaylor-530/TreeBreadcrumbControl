@@ -11,41 +11,52 @@ using TreeBreadcrumbControl.Commands;
 
 namespace Demo
 {
-    public class MainWindowViewModel : BindableBase
+    public class ObjectProperty : Property<ITreeNode<DirectoryInfo>>
     {
-        private ITreeNode<DirectoryInfo> _currentNode;
-        private ObservableCollection<FileSystemInfo> _fileSystemInfos = new();
-        private string _exceptionMessage;
-
-        public ITreeNode<DirectoryInfo> CurrentNode
+        public ObjectProperty(ICommand setCommand) : base(setCommand)
         {
-            get => _currentNode;
-            set => SetProperty(ref _currentNode, value);
         }
+    }
+
+
+
+
+    public class MainViewModel : BindableBase
+    {
+        //private ITreeNode<DirectoryInfo> _currentNode;
+        private ObservableCollection<FileSystemInfo> _fileSystemInfos = new();
+        private Exception _exception;
+
+
+        public ObjectProperty Object { get; }
+        //public ITreeNode<DirectoryInfo> Object
+        //{
+        //    get => _currentNode;
+        //    private set => SetProperty(ref _currentNode, value);
+        //}
 
         public ObservableCollection<FileSystemInfo> FileInfos
         {
             get => _fileSystemInfos;
         }
 
-        public ICommand SetCurrentNodeCommand { get; }
+        //public ICommand SetCurrentNodeCommand { get; }
 
         public ICommand OpenDirectoryCommand { get; }
 
-        public string ExceptionMessage
+        public Exception Exception
         {
-            get => _exceptionMessage;
-            set => SetProperty(ref _exceptionMessage, value);
+            get => _exception;
+            set => SetProperty(ref _exception, value);
         }
 
-        public MainWindowViewModel()
+        public MainViewModel()
         {
-            SetCurrentNodeCommand = new RelayCommand<LazyObservableTreeNode<DirectoryInfo>>(
-                async node => await SetCurrentNodeAsync(node));
+            Object = new(new RelayCommand<LazyObservableTreeNode<DirectoryInfo>>(async node => await SetCurrentNodeAsync(node)));
 
             OpenDirectoryCommand = new RelayCommand<DirectoryInfo>(async info =>
             {
-                var node = (LazyObservableTreeNode<DirectoryInfo>)CurrentNode.Children.First(item => item.Content == info);
+                var node = (LazyObservableTreeNode<DirectoryInfo>)Object.Value.Children.First(item => item.Content == info);
                 await SetCurrentNodeAsync(node);
             });
 
@@ -70,7 +81,7 @@ namespace Demo
                     }
                     catch (Exception e)
                     {
-                        ExceptionMessage = e.Message;
+                        Exception = e;
                     }
 
                     return null;
@@ -78,25 +89,22 @@ namespace Demo
                 StringFormat = content => content.Name.Replace("\\", "").Replace("/", "")
             };
 
-            await rootNode.RefreshAsync();
 
-            CurrentNode = rootNode;
-            await ((IRefreshable)CurrentNode).RefreshAsync();
             await SetCurrentNodeAsync(rootNode);
-
         }
 
         private async Task SetCurrentNodeAsync(LazyObservableTreeNode<DirectoryInfo> node)
         {
-            ExceptionMessage = null;
-            CurrentNode = node;
+            Exception = null;
+
             await node.RefreshAsync();
+            Object.Value = node;
 
             _fileSystemInfos.Clear();
             try
             {
-             
-                foreach(var child in CurrentNode.Children)
+
+                foreach (var child in node.Children)
                 {
                     _fileSystemInfos.Add(child.Content);
                 }
@@ -110,7 +118,7 @@ namespace Demo
             }
             catch (Exception e)
             {
-                ExceptionMessage = e.Message;
+                Exception = e;
                 FileInfos.Clear();
             }
         }

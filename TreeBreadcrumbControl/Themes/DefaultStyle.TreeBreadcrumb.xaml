@@ -9,7 +9,7 @@
         <ResourceDictionary Source="pack://application:,,,/TreeBreadcrumbControl;component/Themes/CustomStyle.Button.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
-    <Style TargetType="{x:Type treeBreadcrumb:TreeBreadcrumb}">
+    <Style TargetType="{x:Type treeBreadcrumb:BreadCrumbsBox}">
         <Setter Property="BorderThickness"
                 Value="1" />
         <Setter Property="BorderBrush"
@@ -22,7 +22,7 @@
                 Value="True" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type treeBreadcrumb:TreeBreadcrumb}">
+                <ControlTemplate TargetType="{x:Type treeBreadcrumb:BreadCrumbsBox}">
                     <Border Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
@@ -34,13 +34,13 @@
                             </Grid.ColumnDefinitions>
 
                             <!--Home Area-->
-                            <treeBreadcrumb:TreeBreadcrumbRootItem Node="{Binding Path=Root, RelativeSource={RelativeSource TemplatedParent}}"
-                                                                   OverflowItems="{Binding Path=OverflowItems, ElementName=TreeBreadcrumbItemsControl}"
-                                                                   SetCurrentNodeCommand="{Binding Path=SetCurrentNodeCommand, RelativeSource={RelativeSource TemplatedParent}}"
+                            <treeBreadcrumb:RootBreadcrumb Node="{Binding Path=Root, RelativeSource={RelativeSource TemplatedParent}}"
+                                                                   Overflow="{Binding Overflow, RelativeSource={RelativeSource Mode=TemplatedParent} }"
+                                                                   SetCurrentNodeCommand="{Binding Path=SetObject, RelativeSource={RelativeSource TemplatedParent}}"
                                                                    IsTextMode="{Binding Path=IsTextMode, RelativeSource={RelativeSource TemplatedParent}}" />
                             <!--Items Area-->
                             <Grid Grid.Column="1">
-                                <UserControl>
+                                <ContentControl>
                                     <markup:If Condition="{Binding Path=IsTextMode, RelativeSource={RelativeSource TemplatedParent}}">
                                         <markup:If.True>
                                             <!--Text mode content-->
@@ -58,24 +58,33 @@
                                                         Command="{Binding Path=SetTextModeCommand, RelativeSource={RelativeSource TemplatedParent}}"
                                                         Style="{StaticResource ButtonStyle.Transparent}" />
 
-                                                <treeBreadcrumb:TreeBreadcrumbItemsControl x:Name="TreeBreadcrumbItemsControl"
-                                                                                           ItemsSource="{Binding Path=Breadcrumb, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                                
+                                                <ItemsControl x:Name="TreeBreadcrumbItemsControl"
+                                                                                           ItemsSource="{Binding Path=Descendants, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"
                                                                                            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                                                                            ScrollViewer.VerticalScrollBarVisibility="Disabled"
                                                                                            HorizontalAlignment="Left"
                                                                                            VerticalAlignment="Center">
                                                     <ItemsControl.ItemTemplate>
                                                         <DataTemplate>
-                                                            <treeBreadcrumb:TreeBreadcrumbItem Node="{Binding}"
-                                                                                               SetCurrentNodeCommand="{Binding Path=SetCurrentNodeCommand, 
-                                                                                                                   RelativeSource={RelativeSource AncestorType=treeBreadcrumb:TreeBreadcrumb}}" />
+                                                            <treeBreadcrumb:Breadcrumb Object="{Binding}"
+                                                                                               SetObject="{Binding Path=SetObject, 
+                                                                                                                   RelativeSource={RelativeSource AncestorType=treeBreadcrumb:BreadCrumbsBox}}" />
                                                         </DataTemplate>
                                                     </ItemsControl.ItemTemplate>
-                                                </treeBreadcrumb:TreeBreadcrumbItemsControl>
+                                                    <ItemsControl.ItemsPanel>
+                                                        <ItemsPanelTemplate>
+                                                            <treeBreadcrumb:CollapseOverflowItemsPanel x:Name="PART_CollapseOverflowItemsPanel"
+                                                               IsItemsHost="True"
+                                                               Orientation="Horizontal"
+                                                               Reserve="True" />
+                                                        </ItemsPanelTemplate>
+                                                    </ItemsControl.ItemsPanel>
+                                                </ItemsControl>
                                             </Grid>
                                         </markup:If.False>
                                     </markup:If>
-                                </UserControl>
+                                </ContentControl>
                             </Grid>
                         </Grid>
                     </Border>

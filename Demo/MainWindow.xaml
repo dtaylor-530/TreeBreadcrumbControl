@@ -12,7 +12,8 @@
         Height="450"
         Width="800"
         MinWidth="300"
-        d:DataContext="{d:DesignInstance {x:Type demo:MainWindowViewModel}}">
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        d:DataContext="{d:DesignInstance {x:Type demo:MainViewModel}}">
 
     <Window.Resources>
         <ResourceDictionary>
@@ -20,81 +21,98 @@
                 <ResourceDictionary Source="pack://application:,,,/TreeBreadcrumbControl;component/Themes/Converters.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/TreeBreadcrumbControl;component/Themes/CustomStyle.ListBox.xaml" />
             </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </Window.Resources>
 
-    <Grid Margin="20"
-          Focusable="True"
-          MouseDown="UIElement_OnMouseDown"
-          Background="#FFFFFF">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="16" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="16" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
-        <treeBreadcrumbControl:TreeBreadcrumb CurrentNode="{Binding CurrentNode}"
-                                              SetCurrentNodeCommand="{Binding Path=SetCurrentNodeCommand}"
-                                              PathSeparator="\" />
-
-        <TextBlock Grid.Row="2"
-                   Text="{Binding ExceptionMessage}"
+            <DataTemplate DataType="{x:Type sys:Exception}">
+                <TextBlock 
+                   Text="{Binding Message}"
                    FontSize="20"
                    FontWeight="Bold"
                    Foreground="White"
                    Background="Red"
                    HorizontalAlignment="Center"
                    TextWrapping="Wrap"
-                   Visibility="{Binding Path=ExceptionMessage, 
+              />
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type io:FileSystemInfo}">
+                <Border Height="28"
+                            Padding="16 0"
+                            Background="#01FFFFFF">
+                    <Border.InputBindings>
+                        <MouseBinding MouseAction="LeftClick"
+                                          Command="{Binding Path=DataContext.OpenDirectoryCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                          CommandParameter="{Binding}" />
+                    </Border.InputBindings>
+                    <Grid>
+                        <Grid.Resources>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="TextTrimming"
+                                            Value="CharacterEllipsis" />
+                                <Setter Property="Foreground"
+                                            Value="#505050" />
+                                <Setter Property="VerticalAlignment"
+                                            Value="Center" />
+                            </Style>
+                        </Grid.Resources>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="16" />
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="16" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0"
+                                       Text="{Binding Name}" />
+                        <TextBlock Grid.Column="2"
+                                       Text="{Binding Attributes}" />
+                        <TextBlock Grid.Column="4"
+                                       Text="{Binding LastWriteTime}" />
+                    </Grid>
+                </Border>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type ObjectProperty}">
+                <treeBreadcrumbControl:Crumbs Object="{Binding Object}"
+                                              SetCurrentNodeCommand="{Binding Path=SetCurrentNodeCommand}"
+                                              PathSeparator="\" />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type demo:MainViewModel}">
+
+                <Grid Margin="20"
+          Focusable="True"
+          MouseDown="UIElement_OnMouseDown"
+          Background="#FFFFFF">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="16" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="16" />
+                        <RowDefinition />
+                        <RowDefinition Height="36" />
+
+                    </Grid.RowDefinitions>
+          
+
+                    <ContentControl 
+            Grid.Row="2"
+            Content="{Binding Exception}" 
+                             Visibility="{Binding , 
                                         Converter={markup:Compose {StaticResource IsNullOrEmptyOperator}, 
                                                                   {StaticResource NotOperator}, 
-                                                                  {StaticResource BooleanToVisibilityConverter}}}" />
+                                                                  {StaticResource BooleanToVisibilityConverter}}}" 
+                        ></ContentControl>
 
-        <ListBox Grid.Row="4"
+                    <ListBox Grid.Row="4"
                  BorderThickness="1"
                  BorderBrush="#CCCCCC"
                  ItemsSource="{Binding FileInfos}"
-                 Style="{StaticResource ListBoxStyle.Base}">       
-            <ListBox.ItemTemplate>
-                <DataTemplate DataType="{x:Type io:FileSystemInfo}">
-                    <Border Height="28"
-                            Padding="16 0"
-                            Background="#01FFFFFF">
-                        <Border.InputBindings>
-                            <MouseBinding MouseAction="LeftClick"
-                                          Command="{Binding Path=DataContext.OpenDirectoryCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
-                                          CommandParameter="{Binding}" />
-                        </Border.InputBindings>
-                        <Grid>
-                            <Grid.Resources>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="TextTrimming"
-                                            Value="CharacterEllipsis" />
-                                    <Setter Property="Foreground"
-                                            Value="#505050" />
-                                    <Setter Property="VerticalAlignment"
-                                            Value="Center" />
-                                </Style>
-                            </Grid.Resources>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="2*" />
-                                <ColumnDefinition Width="16" />
-                                <ColumnDefinition />
-                                <ColumnDefinition Width="16" />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
+                 Style="{StaticResource ListBoxStyle.Base}">
 
-                            <TextBlock Grid.Column="0"
-                                       Text="{Binding Name}" />
-                            <TextBlock Grid.Column="2"
-                                       Text="{Binding Attributes}" />
-                            <TextBlock Grid.Column="4"
-                                       Text="{Binding LastWriteTime}" />
-                        </Grid>
-                    </Border>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-    </Grid>
+                    </ListBox>
+                </Grid>
+            </DataTemplate>
+        </ResourceDictionary>
+    </Window.Resources>
+
+
 </Window>
