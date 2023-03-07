@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TreeBreadcrumbControl.Commands
+namespace WPF.Commands
 {
     public class RelayCommand<T> : RelayCommandBase
     {

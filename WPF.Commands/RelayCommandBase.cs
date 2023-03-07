@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace TreeBreadcrumbControl.Commands
+namespace WPF.Commands
 {
     public abstract class RelayCommandBase : ICommand
     {
