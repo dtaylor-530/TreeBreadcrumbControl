@@ -20,5 +20,10 @@ namespace Demo
             var uiElement = (UIElement)sender;
             uiElement.Focus();
         }
+
+        private void HandleCheck(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Demo.Infrastructure;
+using Demo.Templates.Infrastructure;
 using Models;
 using System;
 using System.Collections;
@@ -11,10 +12,12 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Xml.Linq;
 using TreeBreadcrumbControl;
-using TreeBreadcrumbControl.Commands;
+using WPF.Commands;
 
 namespace Demo
 {
+
+
     public class ObjectProperty : Property<INode>
     {
         public ObjectProperty(ICommand setCommand)
@@ -26,6 +29,7 @@ namespace Demo
     }
 
 
+
     public class MainViewModel : IObserver
     {
         List<Property> properties = new();
@@ -34,47 +38,40 @@ namespace Demo
 
         readonly ObjectProperty objectProperty;
         readonly Property<Exception> exceptionProperty;
-        readonly Property<Collection> fileSystemInfosProperty;      
-
+        readonly Property<Collection> children;      
 
         public MainViewModel()
         {
-            objectProperty = new(new RelayCommand<Node>(node => SetCurrentNodeAsync(node))) { GridRow = 0 };
+            objectProperty = new(new RelayCommand<Node>(SetCurrentNode)) { GridRow = 0 };
             exceptionProperty = new() { GridRow = 2 };
-            fileSystemInfosProperty = new(new()) { GridRow = 4 };
-
+            children = new(new()) { GridRow = 4 };   
             properties.Add(objectProperty);
             properties.Add(exceptionProperty);
-            properties.Add(fileSystemInfosProperty);
+            properties.Add(children);
 
             OpenDirectoryCommand = new RelayCommand<DirectoryInfo>(async info =>
             {
                 var node = (Node)objectProperty.GetValue().Children.OfType<INode>().First(item => item.Content == info);
-                SetCurrentNodeAsync(node);
-            });
-
-            SetCommand = new RelayCommand<object>(a =>
-            {
-
+                SetCurrentNode(node);
             });
 
 #pragma warning disable 4014
-            InitializeCurrentNodeAsync();
+            InitializeCurrentNode();
 #pragma warning restore 4014
         }
 
         public IEnumerable Properties => properties;
-
         public ICommand OpenDirectoryCommand { get; }
-        public ICommand SetCommand { get; }
 
-
-        private void InitializeCurrentNodeAsync()
+        private void InitializeCurrentNode()
         {
-            SetCurrentNodeAsync(new DirectoryNode(@"C:\"));
+
+           SetCurrentNode(new TypeNode());
+           // SetCurrentNodeAsync(new DirectoryNode(@"C:\"));
+           //  SetCurrentNode(new ViewModelNode(typeof(MainViewModel)));
         }
 
-        private void SetCurrentNodeAsync(Node node)
+        private void SetCurrentNode(Node node)
         {
             try
             {
@@ -89,7 +86,7 @@ namespace Demo
 
             void Reset()
             {
-                fileSystemInfosProperty.GetValue().Clear();
+                children.GetValue().Clear();
                 exceptionProperty.SetValue(null);
                 objectProperty.SetValue(node);
                 disposable?.Dispose();
@@ -100,17 +97,17 @@ namespace Demo
         {
             if (change is Change { Type: ChangeType.Insert, Value: Node value })
             {
-                fileSystemInfosProperty.GetValue().Add(value.Content);
+                children.GetValue().Add(value.Content);
             }
         }
 
 
         public void OnCompleted()
         {
-            foreach (var fileInfo in Directory.GetFiles((objectProperty.GetValue().Content as FileSystemInfo).FullName)
-                    .Select(item => new FileInfo(item)))
+            disposable.Dispose();
+            foreach (var property in objectProperty.GetValue().Properties)
             {
-                fileSystemInfosProperty.GetValue().Add(fileInfo);
+                children.GetValue().Add(property);
             }
         }
 

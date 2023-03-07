@@ -7,6 +7,7 @@
         xmlns:demo="clr-namespace:Demo"
         xmlns:markup="clr-namespace:WpfExtensions.Xaml.Markup;assembly=WpfExtensions.Xaml"
         xmlns:io="clr-namespace:System.IO;assembly=mscorlib"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
         Title="MainWindow"
         Height="450"
@@ -77,6 +78,7 @@
                 </Border>
             </DataTemplate>
 
+            
 
             <DataTemplate DataType="{x:Type models:Collection}">
                 <ListBox 
@@ -100,31 +102,35 @@
             <!--ItemTemplateSelector="{x:Static demo:TemplateSelector.Instance}"-->
 
             <DataTemplate DataType="{x:Type demo:MainViewModel}">
-                <ItemsControl ItemsSource="{Binding Properties}">
-                    <ItemsControl.ItemContainerStyle>
-                        <Style>
-                            <Setter Property="Grid.Row" Value="{Binding GridRow}" />
-                            <Setter Property="Grid.Column" Value="{Binding GridColumn}" />
-                        </Style>
-                    </ItemsControl.ItemContainerStyle>
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <Grid Margin="20"
+                <DockPanel>
+                
+                    <ItemsControl ItemsSource="{Binding Properties}">
+                        <ItemsControl.ItemContainerStyle>
+                            <Style>
+                                <Setter Property="Grid.Row" Value="{Binding GridRow}" />
+                                <Setter Property="Grid.Column" Value="{Binding GridColumn}" />
+                            </Style>
+                        </ItemsControl.ItemContainerStyle>
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <Grid Margin="20"
                                   Focusable="True"
                                   MouseDown="UIElement_OnMouseDown"
                                   Background="#FFFFFF">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="16" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="16" />
-                                    <RowDefinition />
-                                    <RowDefinition Height="36" />
-                                </Grid.RowDefinitions>
-                            </Grid>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                </ItemsControl>
+                                    <Grid.RowDefinitions>
+                                 
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="16" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="16" />
+                                        <RowDefinition />
+                                        <RowDefinition Height="36" />
+                                    </Grid.RowDefinitions>
+                                </Grid>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
+                </DockPanel>
             </DataTemplate>
         </ResourceDictionary>
     </Window.Resources>
