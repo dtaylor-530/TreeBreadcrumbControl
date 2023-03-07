@@ -15,14 +15,9 @@ namespace Demo
     {
         private bool _isRefreshing;
         private Collection _children = new();
-        //private Flow flow;
-
-        //public Node(object content) => Content = content;
-
         public abstract Task<object?> GetChildren();
 
         public abstract Task<bool> HasMoreChildren();
-
         public abstract Node ToNode(object value);
 
         public abstract object Content { get; }
@@ -37,9 +32,6 @@ namespace Demo
                 return _children;
             }
         }
-
-        //public Flow Flow { get => flow; set => flow = value; }
-
         public virtual IEnumerable Ancestors
         {
             get
