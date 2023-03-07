@@ -27,6 +27,9 @@ namespace Models
         public ChangeType Type { get; }
     }
 
+
+
+
     public class Collection : IList, IObservable, INotifyCollectionChanged
     {
         private readonly List<object> collection = new();
@@ -154,7 +157,7 @@ namespace Models
 
         internal void Complete()
         {
-            foreach(var observer in Observers)
+            foreach(var observer in Observers.ToArray())
             {
                 observer.OnCompleted();
             }

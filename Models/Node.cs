@@ -14,19 +14,18 @@ namespace Demo
     public abstract class Node : INode
     {
         private bool _isRefreshing;
-        private Func<object, Task<IEnumerable>> _childrenProvider;
-        private Func<object, string> _stringFormat;
         private Collection _children = new();
-        private Flow flow;
+        //private Flow flow;
 
-        public Node(object content) => Content = content;
+        //public Node(object content) => Content = content;
 
-        public abstract Task<object?> GetChildren(object value);
+        public abstract Task<object?> GetChildren();
 
-        public abstract string StringFormat(object value);
+        public abstract Task<bool> HasMoreChildren();
+
         public abstract Node ToNode(object value);
 
-        public object Content { get; }
+        public abstract object Content { get; }
 
         public INode Parent { get; protected set; }
 
@@ -34,12 +33,12 @@ namespace Demo
         {
             get
             {
-                RefreshAsync();
+                _ = RefreshAsync();
                 return _children;
             }
         }
 
-        public Flow Flow { get => flow; set => flow = value; }
+        //public Flow Flow { get => flow; set => flow = value; }
 
         public virtual IEnumerable Ancestors
         {
@@ -49,6 +48,8 @@ namespace Demo
             }
 
         }
+
+        public abstract IEnumerable Properties { get; }
 
         private IEnumerable GetAncestors()
         {
@@ -66,16 +67,19 @@ namespace Demo
             if (_isRefreshing)
                 return false;
 
+            if (await HasMoreChildren() == false)
+                return false;
+
             _isRefreshing = true;
 
             try
             {
-                var output = await this.GetChildren(Content);
+                var output = await this.GetChildren();
                 if (output is IEnumerable enumerable)
                     SetChildrenCache(ToNodes(enumerable).ToList());
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
                 return false;
             }
@@ -83,7 +87,7 @@ namespace Demo
             {
                 _isRefreshing = false;
             }
-     
+
             IEnumerable<Node> ToNodes(IEnumerable collection)
             {
                 foreach (var item in collection)
@@ -104,9 +108,6 @@ namespace Demo
                 _children.Complete();
             }
         }
-
-
-        public override string ToString() => StringFormat(Content) ?? Content.ToString();
     }
 
 }
