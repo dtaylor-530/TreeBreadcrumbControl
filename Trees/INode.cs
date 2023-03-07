@@ -53,6 +53,8 @@ namespace TreeBreadcrumbControl
 
         IObservable Children { get; }
 
+        IEnumerable Properties { get; }
+
         IEnumerable Ancestors { get; }
     }
 }
