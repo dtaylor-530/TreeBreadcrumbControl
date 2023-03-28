@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Enums", "Enums\Enums.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utility.Trees", "..\..\..\UtilityStandard\Utility.Instructions\Utility.Trees\Utility.Trees.csproj", "{238AA846-568A-43AA-B1FF-F56CBACA8996}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utility.Observables", "..\..\..\UtilityStandard\Utility.WPF\Utility.Observables\Utility.Observables.csproj", "{7BF30F60-7653-41C9-80C8-5F07BB3059EF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{238AA846-568A-43AA-B1FF-F56CBACA8996}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{238AA846-568A-43AA-B1FF-F56CBACA8996}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{238AA846-568A-43AA-B1FF-F56CBACA8996}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7BF30F60-7653-41C9-80C8-5F07BB3059EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7BF30F60-7653-41C9-80C8-5F07BB3059EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7BF30F60-7653-41C9-80C8-5F07BB3059EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7BF30F60-7653-41C9-80C8-5F07BB3059EF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
