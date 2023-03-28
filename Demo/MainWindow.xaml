@@ -95,6 +95,31 @@
                                               PathSeparator="\" />
             </DataTemplate>
 
+            <DataTemplate DataType="{x:Type demo:Object2Property}">
+                <TreeView ItemsSource="{Binding Value.Children, Converter={x:Static treeBreadcrumbControl:DefaultConverter.Instance}}">
+                    <TreeView.ItemTemplate>
+                        <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                            <StackPanel Orientation="Horizontal">
+                                <StackPanel.Style>
+                                    <Style>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, 
+                                                 AncestorType={x:Type TreeViewItem}}, Path=IsSelected}" 
+                                                 Value="True">
+                                                <Setter Property="StackPanel.Background" Value="LightBlue"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </StackPanel.Style>
+                                
+                                <ContentControl Content="{Binding Content}"  VerticalAlignment="Center">                                   
+                                </ContentControl>
+                            </StackPanel>
+                        </HierarchicalDataTemplate>
+                    </TreeView.ItemTemplate>
+                </TreeView>
+            </DataTemplate>
+
             <DataTemplate DataType="{x:Type demo:Property}">
                 <ContentControl Content="{Binding Value}" />
             </DataTemplate>
@@ -102,13 +127,14 @@
             <!--ItemTemplateSelector="{x:Static demo:TemplateSelector.Instance}"-->
 
             <DataTemplate DataType="{x:Type demo:MainViewModel}">
-                <DockPanel>
-                
+                <DockPanel>                
                     <ItemsControl ItemsSource="{Binding Properties}">
                         <ItemsControl.ItemContainerStyle>
                             <Style>
                                 <Setter Property="Grid.Row" Value="{Binding GridRow}" />
                                 <Setter Property="Grid.Column" Value="{Binding GridColumn}" />
+                                <Setter Property="Grid.ColumnSpan" Value="{Binding GridColumnSpan}" />
+                                <Setter Property="Grid.RowSpan" Value="{Binding GridRowSpan}" />
                             </Style>
                         </ItemsControl.ItemContainerStyle>
                         <ItemsControl.ItemsPanel>
@@ -117,8 +143,7 @@
                                   Focusable="True"
                                   MouseDown="UIElement_OnMouseDown"
                                   Background="#FFFFFF">
-                                    <Grid.RowDefinitions>
-                                 
+                                    <Grid.RowDefinitions>                                 
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="16" />
                                         <RowDefinition Height="Auto" />
@@ -126,6 +151,10 @@
                                         <RowDefinition />
                                         <RowDefinition Height="36" />
                                     </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
                                 </Grid>
                             </ItemsPanelTemplate>
                         </ItemsControl.ItemsPanel>

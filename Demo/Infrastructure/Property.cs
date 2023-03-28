@@ -11,6 +11,8 @@ namespace Demo
 
         public int GridRow { get; set; }
         public int GridColumn { get; set; }
+        public int GridColumnSpan { get; set; }
+        public int GridRowSpan { get; set; }
 
 
         public event PropertyChangedEventHandler PropertyChanged;

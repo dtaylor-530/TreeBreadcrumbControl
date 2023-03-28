@@ -1,16 +1,11 @@
 ﻿using Demo.Infrastructure;
-using Demo.Templates.Infrastructure;
 using Models;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
 using System.Windows.Input;
-using System.Xml.Linq;
 using TreeBreadcrumbControl;
 using WPF.Commands;
 
@@ -28,24 +23,34 @@ namespace Demo
         public ICommand? SetCommand { get; protected set; }
     }
 
+    public class Object2Property : Property<INode>
+    {
+        public Object2Property()
+        {
+        }
+    }
+
+
 
 
     public class MainViewModel : IObserver
     {
-        List<Property> properties = new();
-
+        readonly List<Property> properties = new();
         IDisposable disposable = null;
 
         readonly ObjectProperty objectProperty;
+        readonly Object2Property object2Property;
         readonly Property<Exception> exceptionProperty;
-        readonly Property<Collection> children;      
+        readonly Property<Collection> children;
 
         public MainViewModel()
         {
             objectProperty = new(new RelayCommand<Node>(SetCurrentNode)) { GridRow = 0 };
+            object2Property = new() { GridColumn = 1, GridRowSpan = 5 };
             exceptionProperty = new() { GridRow = 2 };
-            children = new(new()) { GridRow = 4 };   
+            children = new(new()) { GridRow = 4 };
             properties.Add(objectProperty);
+            properties.Add(object2Property);
             properties.Add(exceptionProperty);
             properties.Add(children);
 
@@ -61,14 +66,15 @@ namespace Demo
         }
 
         public IEnumerable Properties => properties;
+
         public ICommand OpenDirectoryCommand { get; }
 
         private void InitializeCurrentNode()
         {
 
-           SetCurrentNode(new TypeNode());
-           // SetCurrentNodeAsync(new DirectoryNode(@"C:\"));
-           //  SetCurrentNode(new ViewModelNode(typeof(MainViewModel)));
+            SetCurrentNode(new TypeNode());
+            // SetCurrentNodeAsync(new DirectoryNode(@"C:\"));
+            //  SetCurrentNode(new ViewModelNode(typeof(MainViewModel)));
         }
 
         private void SetCurrentNode(Node node)
@@ -89,6 +95,7 @@ namespace Demo
                 children.GetValue().Clear();
                 exceptionProperty.SetValue(null);
                 objectProperty.SetValue(node);
+                object2Property.SetValue(node);
                 disposable?.Dispose();
             }
         }
