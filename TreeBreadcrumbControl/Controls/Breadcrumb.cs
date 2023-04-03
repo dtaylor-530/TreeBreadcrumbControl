@@ -23,16 +23,6 @@ namespace TreeBreadcrumbControl
             HasItemsProperty = Register(),
             ChildrenProperty = Register(),
             FlowProperty = Register(new PropertyMetadata(Flow.Direct));
-        //    DependencyProperty.Register("Object", typeof(object), typeof(Breadcrumb), new PropertyMetadata(null, Changed));
-
-        //public static readonly DependencyProperty SetObjectProperty = 
-        //    DependencyProperty.Register("SetObject", typeof(ICommand), typeof(Breadcrumb), new PropertyMetadata(null));
-
-        ////public static readonly DependencyProperty HasItemsProperty =
-        ////    DependencyProperty.Register("HasItems", typeof(bool), typeof(Breadcrumb), new PropertyMetadata(false));
-
-        //public static readonly DependencyProperty FlowProperty =
-        //    DependencyProperty.Register("Flow", typeof(Flow), typeof(Breadcrumb), new PropertyMetadata(Flow.Direct));
 
         private static void Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
