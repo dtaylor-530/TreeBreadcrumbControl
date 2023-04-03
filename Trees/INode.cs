@@ -1,48 +1,49 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Utility.Observables;
 
 namespace TreeBreadcrumbControl
 {
 
-    public interface IObserver
-    {
-        void OnNext(object value);
+    //public interface IObserver
+    //{
+    //    void OnNext(object value);
 
-        void OnCompleted();
+    //    void OnCompleted();
 
-        void OnError(Exception error);
-    }
+    //    void OnError(Exception error);
+    //}
 
-    public interface IObservable : IEnumerable
-    {
-        List<IObserver> Observers { get; }
+    //public interface IObservable : IEnumerable
+    //{
+    //    List<IObserver> Observers { get; }
 
-        IDisposable Subscribe(IObserver value)
-        {
-            return new Disposer(Observers, value);
-        }
-    }
+    //    IDisposable Subscribe(IObserver value)
+    //    {
+    //        return new Disposer(Observers, value);
+    //    }
+    //}
 
-    public class Disposer : IDisposable
-    {
-        private readonly IList observers;
-        private readonly IObserver observer;
+    //public class Disposer : IDisposable
+    //{
+    //    private readonly IList observers;
+    //    private readonly IObserver observer;
 
-        public Disposer(IList observers, IObserver observer)
-        {
-            (this.observers = observers).Add(observer);
-            this.observer = observer;
-        }
+    //    public Disposer(IList observers, IObserver observer)
+    //    {
+    //        (this.observers = observers).Add(observer);
+    //        this.observer = observer;
+    //    }
 
-        public IEnumerable Observers => observers;
-        public IObserver Observer => observer;
+    //    public IEnumerable Observers => observers;
+    //    public IObserver Observer => observer;
 
-        public void Dispose()
-        {
-            observers?.Remove(observer);
-        }
-    }
+    //    public void Dispose()
+    //    {
+    //        observers?.Remove(observer);
+    //    }
+    //}
 
 
     public interface INode
@@ -53,7 +54,7 @@ namespace TreeBreadcrumbControl
 
         IObservable Children { get; }
 
-        IEnumerable Properties { get; }
+        IObservable Properties { get; }
 
         IEnumerable Ancestors { get; }
     }

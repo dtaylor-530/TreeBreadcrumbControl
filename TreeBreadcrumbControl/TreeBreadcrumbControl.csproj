@@ -18,7 +18,9 @@
     <PackageReference Include="WpfExtensions.Xaml" Version="1.1.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Enums\Enums.csproj" />
+    <ProjectReference Include="..\..\..\..\UtilityStandard\Utility.Enums\Utility.Enums\Utility.Enums.csproj" />
+    <ProjectReference Include="..\..\..\..\UtilityStandard\Utility.WPF\Utility.WPF.Packages\Utility.WPF.Packages.csproj" />
+    <ProjectReference Include="..\Trees\Trees.csproj" />
     <ProjectReference Include="..\WPF.Commands\WPF.Commands.csproj" />
   </ItemGroup>
   <ItemGroup>

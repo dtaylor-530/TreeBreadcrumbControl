@@ -1,47 +1,72 @@
-﻿using Enums;
-using System;
+﻿using System;
 using System.Collections;
+using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Data;
 using System.Windows.Input;
+using Utility.Enums;
+using Utility.Observables;
 using WPF.Commands;
+using static Evan.Wpf.DependencyHelper;
 
 namespace TreeBreadcrumbControl
 {
     [TemplatePart(Name = PopupName, Type = typeof(Popup))]
-    public class Breadcrumb : ContentControl
+    public class Breadcrumb : ContentControl, IObserver
     {
         private const string PopupName = "PART_Popup";
 
-        public static readonly DependencyProperty ObjectProperty = DependencyProperty.Register(
-            "Object", typeof(object), typeof(Breadcrumb), new PropertyMetadata(null, Changed));
+        public static readonly DependencyProperty ObjectProperty = Register(new PropertyMetadata(null, Changed)),
+            SetObjectProperty = Register(),
+            HasItemsProperty = Register(),
+            ChildrenProperty = Register(),
+            FlowProperty = Register(new PropertyMetadata(Flow.Direct));
+        //    DependencyProperty.Register("Object", typeof(object), typeof(Breadcrumb), new PropertyMetadata(null, Changed));
+
+        //public static readonly DependencyProperty SetObjectProperty = 
+        //    DependencyProperty.Register("SetObject", typeof(ICommand), typeof(Breadcrumb), new PropertyMetadata(null));
+
+        ////public static readonly DependencyProperty HasItemsProperty =
+        ////    DependencyProperty.Register("HasItems", typeof(bool), typeof(Breadcrumb), new PropertyMetadata(false));
+
+        //public static readonly DependencyProperty FlowProperty =
+        //    DependencyProperty.Register("Flow", typeof(Flow), typeof(Breadcrumb), new PropertyMetadata(Flow.Direct));
 
         private static void Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-  
+            if (d is IObserver observer && e.NewValue is INode { Children: var children } node)
+            {
+                children
+                    .Subscribe(observer);
+            }
         }
 
-        public static readonly DependencyProperty SetObjectProperty = DependencyProperty.Register(
-            "SetObject", typeof(ICommand), typeof(Breadcrumb), new PropertyMetadata(null));
+        static Breadcrumb()
+        {
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(Breadcrumb), new FrameworkPropertyMetadata(typeof(Breadcrumb)));
+        }
 
 
+        private Popup _popup;
+
+
+        public Breadcrumb()
+        {
+            InternalSetCurrentNodeCommand = new RelayCommand<object>(parameter =>
+            {
+                SetObject?.Execute(parameter);
+                _popup.SetCurrentValue(Popup.IsOpenProperty, false);
+            });
+        }
+        public ICommand InternalSetCurrentNodeCommand { get; }
+        #region 
 
         public Flow Flow
         {
             get { return (Flow)GetValue(FlowProperty); }
             set { SetValue(FlowProperty, value); }
-        }
-
-
-        public static readonly DependencyProperty FlowProperty =
-            DependencyProperty.Register("Flow", typeof(Flow), typeof(Breadcrumb), new PropertyMetadata(Flow.Direct));
-
-
-
-        static Breadcrumb()
-        {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(Breadcrumb), new FrameworkPropertyMetadata(typeof(Breadcrumb)));
         }
 
         public object Object
@@ -56,25 +81,44 @@ namespace TreeBreadcrumbControl
             set => SetValue(SetObjectProperty, value);
         }
 
-        // -------------------------------------------------------------------------------------------------------------------------------
-
-        private Popup _popup;
-
-        public ICommand InternalSetCurrentNodeCommand { get; }
-
-        public Breadcrumb()
+        public bool HasItems
         {
-            InternalSetCurrentNodeCommand = new RelayCommand<object>(parameter =>
-            {
-                SetObject?.Execute(parameter);
-                _popup.SetCurrentValue(Popup.IsOpenProperty, false);
-            });
+            get { return (bool)GetValue(HasItemsProperty); }
+            set { SetValue(HasItemsProperty, value); }
         }
+
+        public Binding Children
+        {
+            get { return (Binding)GetValue(ChildrenProperty); }
+            set { SetValue(ChildrenProperty, value); }
+        }
+
+        
+
+        #endregion
 
         public override void OnApplyTemplate()
         {
             _popup = (Popup)Template.FindName(PopupName, this);
             base.OnApplyTemplate();
+        }
+
+        public void OnNext(object value)
+        {
+            if (value is NotifyCollectionChangedEventArgs { NewItems: { Count: > 0 } newItems } args)
+            {
+                HasItems = true;
+            }
+        }
+
+        public void OnCompleted()
+        {
+
+        }
+
+        public void OnError(Exception error)
+        {
+            throw new NotImplementedException();
         }
     }
 

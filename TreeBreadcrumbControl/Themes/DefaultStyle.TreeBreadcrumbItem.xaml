@@ -108,7 +108,7 @@
                                                 <Setter Property="Tag"
                                                         Value="{StaticResource Iconfont.DoubleLeftArrow}" />
                                             </DataTrigger>
-                                            <DataTrigger Binding="{Binding Path=Object.Children, Converter={StaticResource AnyOperator}, RelativeSource={RelativeSource TemplatedParent}}"
+                                            <DataTrigger Binding="{Binding Path=HasItems, RelativeSource={RelativeSource TemplatedParent}}"
                                                          Value="False">
                                                 <Setter Property="Visibility"
                                                         Value="Collapsed" />

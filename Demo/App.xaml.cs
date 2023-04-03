@@ -13,5 +13,10 @@ namespace Demo
     /// </summary>
     public partial class App : Application
     {
+
+        public App()
+        {
+            SQLitePCL.Batteries.Init();
+        }
     }
 }

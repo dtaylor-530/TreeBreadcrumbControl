@@ -1,166 +1,150 @@
-﻿using System;
-using System.Collections;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using TreeBreadcrumbControl;
-
-namespace Models
+﻿namespace Models
 {
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.Collections.Specialized;
+    using System.Diagnostics;
+    using System.Linq;
+    using System.Reflection;
+    using TreeBreadcrumbControl;
+    using Utility.Observables;
 
-    public enum ChangeType
+    public class Collection : SortableObservableCollection<object>, IObservable
     {
-        Insert, Remove, Update
-    }
-
-    public class Change
-    {
-
-        public Change(object value, int index, ChangeType type)
-        {
-            Value = value;
-            Index = index;
-            Type = type;
-        }
-
-        public object Value { get; }
-        public int Index { get; }
-        public ChangeType Type { get; }
-    }
-
-
-
-
-    public class Collection : IList, IObservable, INotifyCollectionChanged
-    {
-        private readonly List<object> collection = new();
-
-        public event NotifyCollectionChangedEventHandler? CollectionChanged;
+        DeferredEventsCollection _deferredEvents;
+        public List<IObserver> Observers { get; } = new();
 
         public Collection()
         {
         }
 
-        public List<IObserver> Observers { get; } = new();
-
-        public bool IsFixedSize => false;
-
-        public bool IsReadOnly => false;
-
-        public int Count => collection.Count;
-
-        public bool IsSynchronized => false;
-
-        public object SyncRoot => this;
-
-        public object? this[int index] { get => collection[index]; set => collection[index] = value; }
-
-        public IDisposable Subscribe(IObserver observer)
+        public Collection(IEnumerable<object> collection, IComparer<object> comparer = null) : base(collection, comparer)
         {
-            return new Disposer(Observers, observer);
         }
 
-        public IEnumerator GetEnumerator()
+        public Collection(List<object> list, IComparer<object> comparer = null) : base(list, comparer)
         {
-            return collection.GetEnumerator();
         }
 
-        public int Add(object? value)
+
+        /// <summary>
+        /// Raise CollectionChanged event to any listeners.
+        /// Properties/methods modifying this ObservableCollection will raise
+        /// a collection changed event through this virtual method.
+        /// </summary>
+        /// <remarks>
+        /// When overriding this method, either call its base implementation
+        /// or call <see cref="BlockReentrancy"/> to guard against reentrant collection changes.
+        /// </remarks>
+        protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
         {
-            collection.Add(value);
-            foreach (var observer in Observers)
+            var _deferredEvents = typeof(RangeObservableCollection<object>).GetField("_deferredEvents", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(this);
+            if (_deferredEvents is IList list)
             {
-                observer.OnNext(new Change(value, collection.Count - 1, ChangeType.Insert));
+                list.Add(e);
+                return;
             }
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, value, collection.Count - 1));
-            return collection.Count;
-        }
 
-        //protected override void SetItem(int index, T item)
-        //{
-        //    CheckReentrancy();
-        //    T originalItem = this[index];
-        //    base.SetItem(index, item);
-
-        //    //OnIndexerPropertyChanged();
-        //    OnCollectionChanged(NotifyCollectionChangedAction.Replace, originalItem, item, index);
-        //}
-
-        public void Clear()
-        {
-            collection.Clear();
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
-        }
-
-        public bool Contains(object? value)
-        {
-            return collection.Contains(value);
-        }
-
-        public int IndexOf(object? value)
-        {
-            return collection.IndexOf(value);
-        }
-
-        public void Insert(int index, object? value)
-        {
-            foreach (var observer in Observers)
-                observer.OnNext(new Change(value, index, ChangeType.Insert));
-            collection.Insert(index, value);
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, value, index));
-        }
-
-        public void Remove(object? value)
-        {
-            var index = collection.IndexOf(value);
-            foreach (var observer in Observers)
-            {
-                observer.OnNext(new Change(value, index, ChangeType.Remove));
-            }
-            collection.Remove(value);
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, value, index));
-        }
-
-        public void RemoveAt(int index)
-        {
-            var value = collection[index];
-            foreach (var observer in Observers)
-            {
-                observer.OnNext(new Change(value, index, ChangeType.Remove));
-            }
-            collection.RemoveAt(index);
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, value, index));
-        }
-
-        public void CopyTo(Array array, int index)
-        {
-            throw new NotImplementedException("f 4");
-            //Array.Copy(collection, 0, array, index, collection.Count);
-        }
-
-        protected virtual void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
-        {
-            NotifyCollectionChangedEventHandler? handler = CollectionChanged;
-            if (handler != null)
-            {
-                // Not calling BlockReentrancy() here to avoid the SimpleMonitor allocation.
-                //  _blockReentrancyCount++;
-                try
-                {
+            foreach (var handler in GetHandlers())
+                if (IsRange(e) && handler.Target.HasRefresh())
+                    handler.Target.Refresh();
+                else
                     handler(this, e);
-                }
-                finally
-                {
-                    //    _blockReentrancyCount--;
-                }
+
+            foreach (var observer in Observers)
+            {
+                observer.OnNext(e);
             }
         }
+
 
         internal void Complete()
         {
-            foreach(var observer in Observers.ToArray())
+            foreach (var observer in Observers.ToArray())
             {
                 observer.OnCompleted();
             }
+        }
+
+        public IDisposable Subscribe(IObserver observer)
+        {
+
+            observer.OnNext(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, this));
+            return new Disposer(Observers, observer);
+        }
+
+
+        protected override IDisposable DeferEvents() => new DeferredEventsCollection(this);
+
+        bool IsRange(NotifyCollectionChangedEventArgs e) => e.NewItems?.Count > 1 || e.OldItems?.Count > 1;
+
+        IEnumerable<NotifyCollectionChangedEventHandler> GetHandlers()
+        {
+            var info = typeof(ObservableCollection<object>).GetField(nameof(CollectionChanged), BindingFlags.Instance | BindingFlags.NonPublic);
+            var @event = (MulticastDelegate)info.GetValue(this);
+            return @event?.GetInvocationList()
+              .Cast<NotifyCollectionChangedEventHandler>()
+              .Distinct()
+              ?? Enumerable.Empty<NotifyCollectionChangedEventHandler>();
+        }
+
+        /// <summary>
+        /// <a href="https://gist.github.com/weitzhandler/"></a>
+        /// </summary>
+        class DeferredEventsCollection : List<NotifyCollectionChangedEventArgs>, IDisposable
+        {
+            private readonly Collection _collection;
+            public DeferredEventsCollection(Collection collection)
+            {
+                Debug.Assert(collection != null);
+                Debug.Assert(collection._deferredEvents == null);
+                _collection = collection;
+                _collection._deferredEvents = this;
+            }
+
+
+            public void Dispose()
+            {
+                _collection._deferredEvents = null;
+
+                var handlers = _collection
+                  .GetHandlers()
+                  .ToLookup(h => h.Target?.HasRefresh());
+
+                foreach (var handler in handlers[false])
+                    foreach (var e in this)
+                        handler(_collection, e);
+
+                foreach (var cv in handlers[true].Select(h => h.Target)
+                  //.Cast<CollectionView>()
+                  .Distinct())
+                {
+                    cv?.Refresh();
+                }
+            }
+        }
+
+    }
+
+    public static class RefreshHelper
+    {
+
+        const string MethodName = "Refresh";
+
+        public static bool HasRefresh(this object objectToCheck)
+        {
+            var type = objectToCheck.GetType();
+            return type.GetMethod(MethodName) != null;
+        }
+
+
+
+        public static void Refresh(this object objectToCheck)
+        {
+            var methodInfo = objectToCheck.GetType().GetMethod(MethodName);
+            methodInfo.Invoke(objectToCheck, null);
+
         }
     }
 }

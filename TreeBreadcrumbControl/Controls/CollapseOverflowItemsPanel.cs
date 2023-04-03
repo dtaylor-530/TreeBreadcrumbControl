@@ -1,11 +1,13 @@
-﻿using Enums;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using Utility.Enums;
+using Size = System.Windows.Size;
+using Orientation = System.Windows.Controls.Orientation;
 
 namespace TreeBreadcrumbControl
 {

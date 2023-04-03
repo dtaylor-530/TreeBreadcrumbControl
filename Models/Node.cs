@@ -1,21 +1,16 @@
-﻿using Enums;
-using Models;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Xml.Linq;
+﻿using System.Collections;
 using TreeBreadcrumbControl;
+using Utility.Observables;
 
-namespace Demo
+namespace Models
 {
     public abstract class Node : INode
     {
         private bool _isRefreshing;
-        private Collection _children = new();
-        public abstract Task<object?> GetChildren();
+        protected Collection _children = new();
+        protected Collection _properties = new();
+        public virtual Task<object?> GetChildren() => throw new NotImplementedException();
+        public virtual Task<object?> GetProperties() => throw new NotImplementedException();
 
         public abstract Task<bool> HasMoreChildren();
         public abstract Node ToNode(object value);
@@ -24,14 +19,6 @@ namespace Demo
 
         public INode Parent { get; protected set; }
 
-        public virtual IObservable Children
-        {
-            get
-            {
-                _ = RefreshAsync();
-                return _children;
-            }
-        }
         public virtual IEnumerable Ancestors
         {
             get
@@ -41,7 +28,23 @@ namespace Demo
 
         }
 
-        public abstract IEnumerable Properties { get; }
+        public virtual IObservable Children
+        {
+            get
+            {
+                _ = RefreshAsync();
+                return _children;
+            }
+        }
+        public virtual IObservable Properties
+        {
+            get
+            {
+                _ = RefreshAsync();
+                return _properties;
+            }
+        }
+
 
         private IEnumerable GetAncestors()
         {
@@ -54,7 +57,7 @@ namespace Demo
         }
 
 
-        async Task<bool> RefreshAsync()
+        protected virtual async Task<bool> RefreshAsync()
         {
             if (_isRefreshing)
                 return false;
@@ -66,9 +69,16 @@ namespace Demo
 
             try
             {
-                var output = await this.GetChildren();
-                if (output is IEnumerable enumerable)
-                    SetChildrenCache(ToNodes(enumerable).ToList());
+                {
+                    var output = await GetChildren();
+                    if (output is IEnumerable enumerable)
+                        SetChildrenCache(ToNodes(enumerable).ToList());
+                }
+                //{
+                //    var output = await GetProperties();
+                //    if (output is IEnumerable enumerable)
+                //        SetPropertiesCache(ToNodes(enumerable).ToList());
+                //}
                 return true;
             }
             catch (Exception ex)
@@ -84,20 +94,25 @@ namespace Demo
             {
                 foreach (var item in collection)
                 {
-                    var lazyNode = ToNode(item);
-                    lazyNode.Parent = this;
-                    yield return lazyNode;
+                    var node = ToNode(item);
+                    node.Parent = this;
+                    yield return node;
                 }
             }
 
-            void SetChildrenCache(IReadOnlyList<INode> childrenCache)
+            void SetChildrenCache(List<Node> childrenCache)
             {
                 _children.Clear();
-                foreach (var child in childrenCache)
-                {
-                    _children.Add(child);
-                }
+                _children.AddRange(childrenCache);
                 _children.Complete();
+            }
+
+
+            void SetPropertiesCache(List<Node> list)
+            {
+                _properties.Clear();
+                _properties.AddRange(list);
+                _properties.Complete();
             }
         }
     }

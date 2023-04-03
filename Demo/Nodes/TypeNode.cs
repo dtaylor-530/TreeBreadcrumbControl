@@ -1,14 +1,18 @@
 ﻿using Demo.Templates.Infrastructure;
+using Models;
+using SoftFluent.Windows;
 using System;
 using System.Collections;
 using System.Threading.Tasks;
+using Utility.Observables;
 
 namespace Demo.Infrastructure
 {
     public enum NodeType
     {
         ViewModel,
-        Directory
+        Directory,
+        Property
     }
 
 
@@ -18,16 +22,15 @@ namespace Demo.Infrastructure
 
         public TypeNode()
         {
-
         }
 
         public override string Content => nameof(NodeType);
 
-        public override IEnumerable Properties
+        public override IObservable Properties
         {
             get
             {
-                yield break;
+                return new Collection();
             }
         }
 
@@ -54,6 +57,7 @@ namespace Demo.Infrastructure
                 {
                     NodeType.ViewModel => new ViewModelNode(typeof(TopViewModel)),
                     NodeType.Directory => new DirectoryNode(@"C:\"),
+                    NodeType.Property => new PropertySource(new Customer2()),
                     _ => throw new Exception("r 4333"),
                 };
             throw new Exception("2r 11 4333");
@@ -62,6 +66,11 @@ namespace Demo.Infrastructure
         public override Task<bool> HasMoreChildren()
         {
             return Task.FromResult(flag == false);
+        }
+
+        public override Task<object> GetProperties()
+        {
+            return Task.FromResult(new object());
         }
     }
 }

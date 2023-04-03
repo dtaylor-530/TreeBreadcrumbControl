@@ -3,10 +3,14 @@ using Models;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Windows.Input;
+using System.Xml.Linq;
 using TreeBreadcrumbControl;
+using Utility.Observables;
 using WPF.Commands;
 
 namespace Demo
@@ -71,8 +75,9 @@ namespace Demo
 
         private void InitializeCurrentNode()
         {
-
-            SetCurrentNode(new TypeNode());
+            var typeNode = new TypeNode();
+            SetCurrentNode(typeNode);
+            object2Property.SetValue(typeNode);
             // SetCurrentNodeAsync(new DirectoryNode(@"C:\"));
             //  SetCurrentNode(new ViewModelNode(typeof(MainViewModel)));
         }
@@ -82,7 +87,7 @@ namespace Demo
             try
             {
                 Reset();
-                disposable = node.Children.Subscribe(this);
+                disposable = node.Properties.Subscribe(this);
             }
             catch (Exception e)
             {
@@ -95,27 +100,27 @@ namespace Demo
                 children.GetValue().Clear();
                 exceptionProperty.SetValue(null);
                 objectProperty.SetValue(node);
-                object2Property.SetValue(node);
+                //object2Property.SetValue(node);
                 disposable?.Dispose();
             }
         }
 
         public void OnNext(object change)
         {
-            if (change is Change { Type: ChangeType.Insert, Value: Node value })
+            if (change is NotifyCollectionChangedEventArgs {  Action: NotifyCollectionChangedAction.Add, NewItems : IEnumerable values })
             {
-                children.GetValue().Add(value.Content);
-            }
+                children.GetValue().AddRange(values.Cast<object>());
+            }    
         }
 
 
         public void OnCompleted()
         {
             disposable.Dispose();
-            foreach (var property in objectProperty.GetValue().Properties)
-            {
-                children.GetValue().Add(property);
-            }
+            //foreach (var property in objectProperty.GetValue().Properties)
+            //{
+            //    children.GetValue().Add(property);
+            //}
         }
 
         public void OnError(Exception error)

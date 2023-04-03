@@ -8,6 +8,7 @@
         xmlns:markup="clr-namespace:WpfExtensions.Xaml.Markup;assembly=WpfExtensions.Xaml"
         xmlns:io="clr-namespace:System.IO;assembly=mscorlib"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:controls="http://schemas.utility.com/trees"
         mc:Ignorable="d"
         Title="MainWindow"
         Height="450"
@@ -86,6 +87,11 @@
                  BorderBrush="#CCCCCC"
                  ItemsSource="{Binding }"
                  Style="{StaticResource ListBoxStyle.Base}">
+                    <!--<ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Ellipse Fill="Red" Height="20" Width="20"></Ellipse>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>-->
                 </ListBox>
             </DataTemplate>
             
@@ -96,7 +102,8 @@
             </DataTemplate>
 
             <DataTemplate DataType="{x:Type demo:Object2Property}">
-                <TreeView ItemsSource="{Binding Value.Children, Converter={x:Static treeBreadcrumbControl:DefaultConverter.Instance}}">
+                <!--<controls:MyTreeView ItemsSource="{Binding Value.Children}">-->
+                <TreeView ItemsSource="{Binding Value.Children}">
                     <TreeView.ItemTemplate>
                         <HierarchicalDataTemplate ItemsSource="{Binding Children}">
                             <StackPanel Orientation="Horizontal">
@@ -111,13 +118,14 @@
                                         </Style.Triggers>
                                     </Style>
                                 </StackPanel.Style>
-                                
-                                <ContentControl Content="{Binding Content}"  VerticalAlignment="Center">                                   
+
+                                <ContentControl Content="{Binding Content,  Converter={x:Static treeBreadcrumbControl:DefaultConverter.Instance}}"  VerticalAlignment="Center">
                                 </ContentControl>
                             </StackPanel>
                         </HierarchicalDataTemplate>
                     </TreeView.ItemTemplate>
                 </TreeView>
+                <!--</controls:MyTreeView>-->
             </DataTemplate>
 
             <DataTemplate DataType="{x:Type demo:Property}">

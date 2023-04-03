@@ -1,4 +1,5 @@
 ﻿using Demo.Infrastructure;
+using Models;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Utility.Observables;
 
 namespace Demo.Templates.Infrastructure
 {
@@ -13,6 +15,7 @@ namespace Demo.Templates.Infrastructure
     {
         private Type type;
         bool flag;
+
         public ViewModelNode(Type type)
         {
             this.type = type;
@@ -20,7 +23,7 @@ namespace Demo.Templates.Infrastructure
 
         public override object Content => Activator.CreateInstance(type);
 
-        public override IEnumerable Properties => Array.Empty<Type>();
+        public override IObservable Properties => new Collection();
 
         public override async Task<object?> GetChildren()
         {
@@ -43,5 +46,11 @@ namespace Demo.Templates.Infrastructure
         {
             return Task.FromResult(flag == false);
         }
+
+        public override Task<object> GetProperties()
+        {
+            return Task.FromResult(new object());
+        }
+
     }
 }

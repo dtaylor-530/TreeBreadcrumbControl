@@ -13,11 +13,21 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Models", "Models\Models.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WPF.Commands", "WPF.Commands\WPF.Commands.csproj", "{69A08522-F5B5-4386-9654-526C77FA8598}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Enums", "Enums\Enums.csproj", "{16789649-2226-4FD6-8B57-46E57EFE0D4B}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utility.Trees", "..\..\..\UtilityStandard\Utility.Instructions\Utility.Trees\Utility.Trees.csproj", "{238AA846-568A-43AA-B1FF-F56CBACA8996}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utility.Observables", "..\..\..\UtilityStandard\Utility.WPF\Utility.Observables\Utility.Observables.csproj", "{7BF30F60-7653-41C9-80C8-5F07BB3059EF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PropertyGrid", "PropertyGrid", "{94F0952A-29DB-4455-83A8-97C70497ACD1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PropertyGrid", "..\..\..\UtilityStandard\Utility.PropertyGrid\SoftFluent.Windows\PropertyGrid\PropertyGrid.csproj", "{9F38F170-1B32-4C21-9092-2C528618DAA4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PropertyGrid.Abstractions", "..\..\..\UtilityStandard\Utility.PropertyGrid\SoftFluent.Windows\PropertyGrid.Abstractions\PropertyGrid.Abstractions.csproj", "{2A17133E-BAFD-4EBB-9695-13FEAB651C45}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utility.WPF.Controls.Trees", "..\..\..\UtilityStandard\Utility.WPF\Utility.WPF.Controls.Trees\Utility.WPF.Controls.Trees.csproj", "{52093569-BC2E-4CD8-BDAF-7CFD9B5880B3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utility.Enums", "..\..\..\UtilityStandard\Utility.Enums\Utility.Enums\Utility.Enums.csproj", "{11E17179-6AF1-48EB-B573-6E0FFE137BB7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utility.Trees", "..\..\..\UtilityStandard\Utility.Trees\Utility.Trees\Utility.Trees.csproj", "{66EBA59C-8244-4A56-8C65-DE73B6129816}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utility.WPF.Packages", "..\..\..\UtilityStandard\Utility.WPF\Utility.WPF.Packages\Utility.WPF.Packages.csproj", "{BA9ED651-B97F-4EED-BA85-F3357A7112F5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,21 +55,41 @@ Global
 		{69A08522-F5B5-4386-9654-526C77FA8598}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{69A08522-F5B5-4386-9654-526C77FA8598}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{69A08522-F5B5-4386-9654-526C77FA8598}.Release|Any CPU.Build.0 = Release|Any CPU
-		{16789649-2226-4FD6-8B57-46E57EFE0D4B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{16789649-2226-4FD6-8B57-46E57EFE0D4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{16789649-2226-4FD6-8B57-46E57EFE0D4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{16789649-2226-4FD6-8B57-46E57EFE0D4B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{238AA846-568A-43AA-B1FF-F56CBACA8996}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{238AA846-568A-43AA-B1FF-F56CBACA8996}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{238AA846-568A-43AA-B1FF-F56CBACA8996}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{238AA846-568A-43AA-B1FF-F56CBACA8996}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7BF30F60-7653-41C9-80C8-5F07BB3059EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7BF30F60-7653-41C9-80C8-5F07BB3059EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7BF30F60-7653-41C9-80C8-5F07BB3059EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7BF30F60-7653-41C9-80C8-5F07BB3059EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F38F170-1B32-4C21-9092-2C528618DAA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F38F170-1B32-4C21-9092-2C528618DAA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F38F170-1B32-4C21-9092-2C528618DAA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F38F170-1B32-4C21-9092-2C528618DAA4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A17133E-BAFD-4EBB-9695-13FEAB651C45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A17133E-BAFD-4EBB-9695-13FEAB651C45}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A17133E-BAFD-4EBB-9695-13FEAB651C45}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A17133E-BAFD-4EBB-9695-13FEAB651C45}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52093569-BC2E-4CD8-BDAF-7CFD9B5880B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52093569-BC2E-4CD8-BDAF-7CFD9B5880B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52093569-BC2E-4CD8-BDAF-7CFD9B5880B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52093569-BC2E-4CD8-BDAF-7CFD9B5880B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{11E17179-6AF1-48EB-B573-6E0FFE137BB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11E17179-6AF1-48EB-B573-6E0FFE137BB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11E17179-6AF1-48EB-B573-6E0FFE137BB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11E17179-6AF1-48EB-B573-6E0FFE137BB7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66EBA59C-8244-4A56-8C65-DE73B6129816}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66EBA59C-8244-4A56-8C65-DE73B6129816}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66EBA59C-8244-4A56-8C65-DE73B6129816}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66EBA59C-8244-4A56-8C65-DE73B6129816}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA9ED651-B97F-4EED-BA85-F3357A7112F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA9ED651-B97F-4EED-BA85-F3357A7112F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA9ED651-B97F-4EED-BA85-F3357A7112F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA9ED651-B97F-4EED-BA85-F3357A7112F5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{9F38F170-1B32-4C21-9092-2C528618DAA4} = {94F0952A-29DB-4455-83A8-97C70497ACD1}
+		{2A17133E-BAFD-4EBB-9695-13FEAB651C45} = {94F0952A-29DB-4455-83A8-97C70497ACD1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {14E69648-E846-43BE-9C14-D3B8181AC068}
