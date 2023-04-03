@@ -22,10 +22,9 @@
     <PackageReference Include="WpfExtensions.Xaml" Version="1.1.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\UtilityStandard\Utility.PropertyGrid\SoftFluent.Windows\PropertyGrid.Abstractions\PropertyGrid.Abstractions.csproj" />
-    <ProjectReference Include="..\..\..\..\UtilityStandard\Utility.PropertyGrid\SoftFluent.Windows\PropertyGrid\PropertyGrid.csproj" />
-    <ProjectReference Include="..\..\..\..\UtilityStandard\Utility.Trees\Utility.Trees\Utility.Trees.csproj" />
-    <ProjectReference Include="..\..\..\..\UtilityStandard\Utility.WPF\Utility.WPF.Controls.Trees\Utility.WPF.Controls.Trees.csproj" />
+    <ProjectReference Include="..\..\Utility.PropertyGrid\SoftFluent.Windows\PropertyGrid\PropertyGrid.csproj" />
+    <ProjectReference Include="..\..\Utility.Trees\Utility.Trees\Utility.Trees.csproj" />
+    <ProjectReference Include="..\..\Utility.WPF\Utility.WPF.Packages\Utility.WPF.Packages.csproj" />
     <ProjectReference Include="..\Models\Models.csproj" />
     <ProjectReference Include="..\TreeBreadcrumbControl\TreeBreadcrumbControl.csproj" />
   </ItemGroup>
