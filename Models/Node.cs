@@ -1,5 +1,5 @@
 ﻿using System.Collections;
-using TreeBreadcrumbControl;
+using Trees;
 using Utility.Observables;
 
 namespace Models
@@ -13,11 +13,11 @@ namespace Models
         public virtual Task<object?> GetProperties() => throw new NotImplementedException();
 
         public abstract Task<bool> HasMoreChildren();
-        public abstract Node ToNode(object value);
+        public abstract INode ToNode(object value);
 
         public abstract object Content { get; }
 
-        public INode Parent { get; protected set; }
+        public INode Parent { get; set; }
 
         public virtual IEnumerable Ancestors
         {
@@ -35,8 +35,18 @@ namespace Models
                 _ = RefreshAsync();
                 return _children;
             }
+        }      
+        
+        public virtual IObservable Branches
+        {
+            get
+            {
+                _ = RefreshAsync();
+                return _children;
+            }
         }
-        public virtual IObservable Properties
+
+        public virtual IObservable Leaves
         {
             get
             {
@@ -90,7 +100,7 @@ namespace Models
                 _isRefreshing = false;
             }
 
-            IEnumerable<Node> ToNodes(IEnumerable collection)
+            IEnumerable<INode> ToNodes(IEnumerable collection)
             {
                 foreach (var item in collection)
                 {
@@ -100,7 +110,7 @@ namespace Models
                 }
             }
 
-            void SetChildrenCache(List<Node> childrenCache)
+            void SetChildrenCache(List<INode> childrenCache)
             {
                 _children.Clear();
                 _children.AddRange(childrenCache);
@@ -108,7 +118,7 @@ namespace Models
             }
 
 
-            void SetPropertiesCache(List<Node> list)
+            void SetPropertiesCache(List<INode> list)
             {
                 _properties.Clear();
                 _properties.AddRange(list);
