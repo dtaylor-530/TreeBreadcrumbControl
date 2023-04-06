@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
+using Trees;
 using Utility.Enums;
 using Utility.Observables;
 using WPF.Commands;
@@ -18,7 +19,8 @@ namespace TreeBreadcrumbControl
     {
         private const string PopupName = "PART_Popup";
 
-        public static readonly DependencyProperty ObjectProperty = Register(new PropertyMetadata(null, Changed)),
+        public static readonly DependencyProperty 
+            ObjectProperty = Register(new PropertyMetadata(null, Changed)),
             SetObjectProperty = Register(),
             HasItemsProperty = Register(),
             ChildrenProperty = Register(),
@@ -26,7 +28,7 @@ namespace TreeBreadcrumbControl
 
         private static void Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is IObserver observer && e.NewValue is INode { Children: var children } node)
+            if (d is IObserver observer && e.NewValue is INode { Children: var children })
             {
                 children
                     .Subscribe(observer);
@@ -51,6 +53,7 @@ namespace TreeBreadcrumbControl
             });
         }
         public ICommand InternalSetCurrentNodeCommand { get; }
+
         #region 
 
         public Flow Flow
