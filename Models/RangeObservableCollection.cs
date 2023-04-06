@@ -1,5 +1,6 @@
 ﻿namespace System.Collections.ObjectModel
 {
+    using Models;
     // Licensed to the .NET Foundation under one or more agreements.
     // The .NET Foundation licenses this file to you under the MIT license.
     // See the LICENSE file in the project root for more information.
@@ -17,7 +18,7 @@
     /// implementing INotifyCollectionChanged to notify listeners
     /// when items get added, removed or the whole list is refreshed.
     /// </summary>
-    public class RangeObservableCollection<T> : ObservableCollection<T>
+    public class RangeObservableCollection<T> : ThreadSafeObservableCollection<T>
     {
         //------------------------------------------------------
         //

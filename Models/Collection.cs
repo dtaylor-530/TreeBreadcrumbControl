@@ -7,7 +7,6 @@
     using System.Diagnostics;
     using System.Linq;
     using System.Reflection;
-    using TreeBreadcrumbControl;
     using Utility.Observables;
 
     public class Collection : SortableObservableCollection<object>, IObservable
