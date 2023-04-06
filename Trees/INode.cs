@@ -3,18 +3,20 @@ using System.Collections;
 using System.Collections.Generic;
 using Utility.Observables;
 
-namespace TreeBreadcrumbControl
+namespace Trees
 {
 
     public interface INode
     {
         object Content { get; }
 
-        INode Parent { get; }
+        INode Parent { get; set; }
 
         IObservable Children { get; }
 
-        IObservable Properties { get; }
+        IObservable Leaves { get; }
+
+        IObservable Branches { get; }
 
         IEnumerable Ancestors { get; }
     }
