@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Models;
+using PropertyGrid.WPF.Demo.Infrastructure;
+using SoftFluent.Windows;
 using System.Windows;
 
 namespace Demo
@@ -13,10 +10,13 @@ namespace Demo
     /// </summary>
     public partial class App : Application
     {
-
-        public App()
+        protected override void OnStartup(StartupEventArgs e)
         {
+
             SQLitePCL.Batteries.Init();
+            AutoObject.PropertyStore = PropertyStore.Instance;
+            Collection.Context = System.Threading.SynchronizationContext.Current;        
+            base.OnStartup(e);
         }
     }
 }
