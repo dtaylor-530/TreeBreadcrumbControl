@@ -58,7 +58,7 @@
         }
 
 
-        internal void Complete()
+        public void Complete()
         {
             foreach (var observer in Observers.ToArray())
             {
