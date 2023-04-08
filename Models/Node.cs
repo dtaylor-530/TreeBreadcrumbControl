@@ -8,9 +8,11 @@ namespace Models
     {
         private bool _isRefreshing;
         protected Collection _children = new();
-        protected Collection _properties = new();
-        public virtual Task<object?> GetChildren() => throw new NotImplementedException();
-        public virtual Task<object?> GetProperties() => throw new NotImplementedException();
+        protected Collection _leaves = new();
+        protected Collection _branches = new();
+        public abstract Task<object?> GetChildren();
+        public virtual Task<object?> GetLeaves() => throw new NotImplementedException();
+        public virtual Task<object?> GetBranches() => throw new NotImplementedException();
 
         public abstract Task<bool> HasMoreChildren();
         public abstract INode ToNode(object value);
@@ -19,30 +21,23 @@ namespace Models
 
         public INode Parent { get; set; }
 
-        public virtual IEnumerable Ancestors
-        {
-            get
-            {
-                return GetAncestors();
-            }
-
-        }
+        public virtual IEnumerable Ancestors => GetAncestors();
 
         public virtual IObservable Children
         {
             get
             {
-                _ = RefreshAsync();
+                _ = RefreshChildrenAsync();
                 return _children;
             }
-        }      
-        
+        }
+
         public virtual IObservable Branches
         {
             get
             {
-                _ = RefreshAsync();
-                return _children;
+                _ = RefreshBranchesAsync();
+                return _branches;
             }
         }
 
@@ -50,11 +45,10 @@ namespace Models
         {
             get
             {
-                _ = RefreshAsync();
-                return _properties;
+                _ = RefreshChildrenAsync();
+                return _leaves;
             }
         }
-
 
         private IEnumerable GetAncestors()
         {
@@ -65,9 +59,16 @@ namespace Models
                 parent = parent.Parent;
             }
         }
+        protected virtual Task<bool> RefreshBranchesAsync()
+        {
+            return Task.FromResult(true);
+        }
+        protected virtual Task<bool> RefreshLeavesAsync()
+        {
+            return Task.FromResult(true);
+        }
 
-
-        protected virtual async Task<bool> RefreshAsync()
+        protected virtual async Task<bool> RefreshChildrenAsync()
         {
             if (_isRefreshing)
                 return false;
@@ -99,30 +100,22 @@ namespace Models
             {
                 _isRefreshing = false;
             }
+        }
 
-            IEnumerable<INode> ToNodes(IEnumerable collection)
+        protected virtual void SetChildrenCache(List<INode> childrenCache)
+        {
+            _children.Clear();
+            _children.AddRange(childrenCache);
+            _children.Complete();
+        }
+
+        protected virtual IEnumerable<INode> ToNodes(IEnumerable collection)
+        {
+            foreach (var item in collection)
             {
-                foreach (var item in collection)
-                {
-                    var node = ToNode(item);
-                    node.Parent = this;
-                    yield return node;
-                }
-            }
-
-            void SetChildrenCache(List<INode> childrenCache)
-            {
-                _children.Clear();
-                _children.AddRange(childrenCache);
-                _children.Complete();
-            }
-
-
-            void SetPropertiesCache(List<INode> list)
-            {
-                _properties.Clear();
-                _properties.AddRange(list);
-                _properties.Complete();
+                var node = ToNode(item);
+                node.Parent = this;
+                yield return node;
             }
         }
     }
