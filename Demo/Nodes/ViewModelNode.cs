@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Trees;
 using Utility.Observables;
 
 namespace Demo.Templates.Infrastructure
@@ -23,7 +24,7 @@ namespace Demo.Templates.Infrastructure
 
         public override object Content => Activator.CreateInstance(type);
 
-        public override IObservable Properties => new Collection();
+        public override IObservable Leaves => new Collection();
 
         public override async Task<object?> GetChildren()
         {
@@ -47,10 +48,12 @@ namespace Demo.Templates.Infrastructure
             return Task.FromResult(flag == false);
         }
 
-        public override Task<object> GetProperties()
+        protected override void SetChildrenCache(List<INode> childrenCache)
         {
-            return Task.FromResult(new object());
+            _branches.Clear();
+            _branches.AddRange(childrenCache);
+            _branches.Complete();
+            base.SetChildrenCache(childrenCache);
         }
-
     }
 }

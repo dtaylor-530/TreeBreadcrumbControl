@@ -1,10 +1,10 @@
 ﻿using Demo.Templates.Infrastructure;
 using Models;
-using SoftFluent.Windows;
+using PropertyGrid;
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using Utility.Observables;
+using Trees;
 
 namespace Demo.Infrastructure
 {
@@ -19,20 +19,11 @@ namespace Demo.Infrastructure
     public class TypeNode : Node
     {
         bool flag;
-
         public TypeNode()
         {
         }
 
         public override string Content => nameof(NodeType);
-
-        public override IObservable Properties
-        {
-            get
-            {
-                return new Collection();
-            }
-        }
 
         public override async Task<object?> GetChildren()
         {
@@ -50,14 +41,14 @@ namespace Demo.Infrastructure
             return Content;
         }
 
-        public override Node ToNode(object value)
+        public override INode ToNode(object value)
         {
             if (value is NodeType nodeType)
                 return nodeType switch
                 {
                     NodeType.ViewModel => new ViewModelNode(typeof(TopViewModel)),
                     NodeType.Directory => new DirectoryNode(@"C:\"),
-                    NodeType.Property => new PropertySource(new Customer2()),
+                    NodeType.Property => new RootProperty(Guid.NewGuid()) { Data = new Customer2() },
                     _ => throw new Exception("r 4333"),
                 };
             throw new Exception("2r 11 4333");
@@ -68,9 +59,12 @@ namespace Demo.Infrastructure
             return Task.FromResult(flag == false);
         }
 
-        public override Task<object> GetProperties()
+        protected override void SetChildrenCache(List<INode> childrenCache)
         {
-            return Task.FromResult(new object());
+            _branches.Clear();
+            _branches.AddRange(childrenCache);
+            _branches.Complete();
+            base.SetChildrenCache(childrenCache);
         }
     }
 }

@@ -10,6 +10,7 @@ using System.Linq;
 using System.Windows.Input;
 using System.Xml.Linq;
 using TreeBreadcrumbControl;
+using Trees;
 using Utility.Observables;
 using WPF.Commands;
 
@@ -87,7 +88,7 @@ namespace Demo
             try
             {
                 Reset();
-                disposable = node.Properties.Subscribe(this);
+                disposable = node.Leaves.Subscribe(this);
             }
             catch (Exception e)
             {

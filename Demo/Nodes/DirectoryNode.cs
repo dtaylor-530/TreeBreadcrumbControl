@@ -1,40 +1,27 @@
 ﻿using Models;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reactive.Subjects;
-using System.Reflection;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using TreeBreadcrumbControl;
-using Utility.Observables;
-
 namespace Demo.Infrastructure
 {
     public class DirectoryNode : Node
     {
         private readonly Lazy<DirectoryInfo> lazyContent;
         private readonly string path;
-        private readonly SynchronizationContext context;
         private bool flag;
 
         public DirectoryNode(string path) : this()
         {
             lazyContent = new Lazy<DirectoryInfo>(() => new(path));
             this.path = path;
-            //Task.Run(GetChildren);
-            context = SynchronizationContext.Current ?? throw new Exception("er 434434");
         }
 
         public DirectoryNode(DirectoryInfo info):this()
         {
             lazyContent = new Lazy<DirectoryInfo>(() => info);
             this.path = info.Name;
-            context = SynchronizationContext.Current ?? throw new Exception("er 434434");
         }
 
         Subject<FileSystemInfo> subject = new();
@@ -44,9 +31,11 @@ namespace Demo.Infrastructure
             subject.Subscribe(a =>
             {
                 if (a is DirectoryInfo directoryInfo)
-                    context.Post(a => { _children.Add(ToNode(a)); }, directoryInfo);
+                    _branches.Add(directoryInfo);
                 else if (a is FileInfo fileInfo)
-                    context.Post(a => { _properties.Add(fileInfo); }, a);
+                    _leaves.Add(fileInfo);
+
+                _children.Add(ToNode(a));
             });
         }
 
@@ -72,28 +61,17 @@ namespace Demo.Infrastructure
         }
 
 
-        public override IObservable Children
-        {
-            get
-            {
-      
-                _ = RefreshChildrenAsync();
-                return _children;
-            }
-        }
-        public override IObservable Properties
-        {
-            get
-            {
-                _ = RefreshPropertiesAsync();
-                return _properties;
-            }
-        }
 
         bool propertyflag;
         bool childrenflag;
 
-        protected Task<bool> RefreshChildrenAsync()
+        protected override async Task<bool> RefreshChildrenAsync()
+        {
+            await RefreshBranchesAsync();
+            return await RefreshLeavesAsync();
+        }
+
+        protected override Task<bool> RefreshBranchesAsync()
         {
             if (childrenflag == false)
                 childrenflag = true;
@@ -120,7 +98,7 @@ namespace Demo.Infrastructure
             return System.Threading.Tasks.Task.FromResult(true);
         }    
         
-        protected Task<bool> RefreshPropertiesAsync()
+        protected override Task<bool> RefreshLeavesAsync()
         {
             if (propertyflag == false)
                 propertyflag = true;
@@ -149,5 +127,9 @@ namespace Demo.Infrastructure
             return System.Threading.Tasks.Task.FromResult(true);
         }
 
+        public override Task<object> GetChildren()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
